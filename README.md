@@ -12,6 +12,12 @@ we're not able to publish public props yet, you will need to either upload your 
 share them with you (if you happen to find me in-game).
 
 ## Installation
+1. Install Python 3.9 or above.
+2. Create a `venv` [Optional]
+3. Run: `pip install cvr-osc-lib`
+4. Now the library is installed, you can start using it!
+
+
 
 ## Usage
 Small example of starting the osc server and client while listening to parameter and
