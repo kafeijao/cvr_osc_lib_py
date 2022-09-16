@@ -1,11 +1,18 @@
 from time import sleep
 from typing import Any, Dict, Optional
 
-from cvr_osc_lib import (OscInterface, PropAvailability, PropCreateReceive,
-                         PropDelete, PropLocationSub, PropParameter,
-                         TrackingDeviceData, TrackingDeviceStatus)
-from cvr_osc_lib.osc_messages_data import (TrackingDeviceType,
-                                           TrackingViveTrackerName)
+from cvr_osc_lib import (
+    OscInterface,
+    PropAvailability,
+    PropCreateReceive,
+    PropDelete,
+    PropLocationSub,
+    PropParameter,
+    TrackingDeviceData,
+    TrackingDeviceStatus,
+)
+from cvr_osc_lib.osc_messages_data import TrackingDeviceType, TrackingViveTrackerName
+
 
 ###
 # Welcome to an example how to get tracked props working
@@ -60,6 +67,9 @@ tracker_3_7_is_available: Optional[bool] = None
 # Assign an id for each basestation based on their indexes
 base_station_index_id_mapping = dict()
 
+# Tracker connected state cache for the props
+connection_status_cache: Dict[int, TrackingDeviceStatus] = dict()
+
 
 def on_prop_created(data: PropCreateReceive):
     global base_stations_instance_id
@@ -73,6 +83,8 @@ def on_prop_created(data: PropCreateReceive):
         tracker_0_2_controllers_instance_id = data.prop_instance_id
     elif tracker_3_7_guid == data.prop_guid:
         tracker_3_7_instance_id = data.prop_instance_id
+
+    update_props_connected_param()
 
     print(f'The prop {data.prop_guid} has been spawned with the instance id {data.prop_instance_id}, and has '
           f'{data.prop_sub_sync_transform_count} sub-sync transforms!')
@@ -91,6 +103,8 @@ def on_prop_deleted(data: PropDelete):
     elif tracker_3_7_instance_id == data.prop_instance_id:
         tracker_3_7_instance_id = None
 
+    update_props_connected_param()
+
     print(f'The prop {data.prop_guid} with the instance id {data.prop_instance_id} has been deleted!')
 
 
@@ -107,27 +121,91 @@ def on_prop_availability_changed(data: PropAvailability):
     if data.prop_guid == tracker_3_7_guid and data.prop_instance_id == tracker_3_7_instance_id:
         tracker_3_7_is_available = data.prop_is_available
 
+    update_props_connected_param()
+
     print(f'The prop {data.prop_guid} with the instance id {data.prop_instance_id} is '
           f'{"now" if data.prop_is_available else "NOT"} available!')
 
 
-def spc(
-        osc_interface: OscInterface,
-        data: TrackingDeviceStatus,
+def send_prop_param_status(
         prop_guid: str,
         prop_instance_id: str,
         prop_sync_name: str,
+        device_is_connected: bool,
 ):
-    prop_sync_value: float = 1.0 if data.device_is_connected else 0.0
-    osc_interface.send_prop_parameter(PropParameter(
+    is_connected_float: float = 1.0 if device_is_connected else 0.0
+    osc.send_prop_parameter(PropParameter(
         prop_guid=prop_guid,
         prop_instance_id=prop_instance_id,
         prop_sync_name=prop_sync_name,
-        prop_sync_value=prop_sync_value,
+        prop_sync_value=is_connected_float,
     ))
 
 
-def on_tracking_device_status_changed(osc_i: OscInterface, data: TrackingDeviceStatus):
+def update_props_connected_param(device_idx: Optional[int] = None):
+    statuses = connection_status_cache.values() if device_idx is None else [connection_status_cache[device_idx]]
+    for data in statuses:
+
+        # Handle base_stations prop
+        if data.device_type == TrackingDeviceType.base_station \
+                and base_stations_instance_id is not None \
+                and base_stations_is_available:
+            prop_sync_name = f'Basestation - {base_station_index_id_mapping[data.device_steam_vr_index]}'
+            send_prop_param_status(
+                base_stations_guid,
+                base_stations_instance_id,
+                prop_sync_name,
+                data.device_is_connected,
+            )
+            continue
+
+        # Handle trackers_0_2 & controllers prop
+        if tracker_0_2_controllers_instance_id is not None and tracker_0_2_controllers_is_available:
+
+            if data.device_type == TrackingDeviceType.left_controller:
+                send_prop_param_status(
+                    tracker_0_2_controllers_guid,
+                    tracker_0_2_controllers_instance_id,
+                    'Left Controller',
+                    data.device_is_connected,
+                )
+                continue
+            elif data.device_type == TrackingDeviceType.right_controller:
+                send_prop_param_status(
+                    tracker_0_2_controllers_guid,
+                    tracker_0_2_controllers_instance_id,
+                    'Right Controller',
+                    data.device_is_connected,
+                )
+                continue
+            elif data.device_type == TrackingDeviceType.tracker \
+                    and data.device_steam_vr_name in tracker_0_2__role__sub_sync_index:
+                # The name of the sync on the tracker_0_2 prop starts at index 2, but we need 0
+                prop_sync_name = f'Tracker - {tracker_0_2__role__sub_sync_index[data.device_steam_vr_name] - 2}'
+                send_prop_param_status(
+                    tracker_0_2_controllers_guid,
+                    tracker_0_2_controllers_instance_id,
+                    prop_sync_name,
+                    data.device_is_connected,
+                )
+                continue
+
+        # Handle trackers_3_7 prop
+        if data.device_type == TrackingDeviceType.tracker \
+                and tracker_3_7_instance_id is not None \
+                and data.device_steam_vr_name in tracker_3_7_mapping__role__sub_sync_index:
+            # The name of the sync on the tracker_3_7 prop starts at 3
+            prop_sync_name = f'Tracker - {tracker_3_7_mapping__role__sub_sync_index[data.device_steam_vr_name] + 3}'
+            send_prop_param_status(
+                tracker_3_7_guid,
+                tracker_3_7_instance_id,
+                prop_sync_name,
+                data.device_is_connected,
+            )
+            continue
+
+
+def on_tracking_device_status_changed(data: TrackingDeviceStatus):
 
     # Assign ids to the base stations counting from 0 to <num_of_base_stations> when they connect for the first time
     if data.device_type == TrackingDeviceType.base_station \
@@ -135,44 +213,18 @@ def on_tracking_device_status_changed(osc_i: OscInterface, data: TrackingDeviceS
         id_to_assign = len(base_station_index_id_mapping)
         base_station_index_id_mapping[data.device_steam_vr_index] = id_to_assign
 
-    # Update synced spawnable parameters to make them visible based on tracker status
+    # Save latest device statuses
+    connection_status_cache[data.device_steam_vr_index] = data
 
-    # Handle base_stations prop
-    if data.device_type == TrackingDeviceType.base_station and base_stations_instance_id is not None:
-        prop_sync_name = f'Basestation - {base_station_index_id_mapping[data.device_steam_vr_index]}'
-        spc(osc_i, data, base_stations_guid, base_stations_instance_id, prop_sync_name)
-        return
-
-    # Handle trackers_0_2 & controllers prop
-    if tracker_0_2_controllers_instance_id is not None:
-
-        if data.device_type == TrackingDeviceType.left_controller:
-            spc(osc_i, data, tracker_0_2_controllers_guid, tracker_0_2_controllers_instance_id, 'Left Controller')
-            return
-        elif data.device_type == TrackingDeviceType.right_controller:
-            spc(osc_i, data, tracker_0_2_controllers_guid, tracker_0_2_controllers_instance_id, 'Right Controller')
-            return
-        elif data.device_type == TrackingDeviceType.tracker \
-                and data.device_steam_vr_name in tracker_0_2__role__sub_sync_index:
-            # The name of the sync on the tracker_0_2 prop starts at index 2, but we need 0
-            prop_sync_name = f'Tracker - {tracker_0_2__role__sub_sync_index[data.device_steam_vr_name] - 2}'
-            spc(osc_i, data, tracker_0_2_controllers_guid, tracker_0_2_controllers_instance_id, prop_sync_name)
-            return
-
-    # Handle trackers_3_7 prop
-    if data.device_type == TrackingDeviceType.tracker and tracker_3_7_instance_id is not None and\
-            data.device_steam_vr_name in tracker_3_7_mapping__role__sub_sync_index:
-        # The name of the sync on the tracker_3_7 prop starts at 3
-        prop_sync_name = f'Tracker - {tracker_3_7_mapping__role__sub_sync_index[data.device_steam_vr_name] + 3}'
-        spc(osc_i, data, tracker_3_7_guid, tracker_3_7_instance_id, prop_sync_name)
-        return
+    # Update the prop connected param
+    update_props_connected_param(data.device_steam_vr_index)
 
     print(f'Tacking device type: {data.device_type.value} named: {data.device_steam_vr_name} index: '
           f'{data.device_steam_vr_index} has been {"connected" if data.device_is_connected else "disconnected"}!')
 
 
-def sdl(osc_interface: OscInterface, data: TrackingDeviceData, prop_guid, prop_instance_id, prop_sub_sync_index):
-    osc_interface.send_prop_location_sub_sync(PropLocationSub(
+def sdl(data: TrackingDeviceData, prop_guid, prop_instance_id, prop_sub_sync_index):
+    osc.send_prop_location_sub_sync(PropLocationSub(
         prop_guid=prop_guid,
         prop_instance_id=prop_instance_id,
         prop_sub_sync_index=prop_sub_sync_index,
@@ -181,35 +233,35 @@ def sdl(osc_interface: OscInterface, data: TrackingDeviceData, prop_guid, prop_i
     ))
 
 
-def on_tracking_device_data_updated(osc_i: OscInterface, data: TrackingDeviceData):
+def on_tracking_device_data_updated(data: TrackingDeviceData):
     # Update sub-sync spawnable transforms to make them move with the trackers
 
     # Handle base_stations prop
     if data.device_type == TrackingDeviceType.base_station and base_stations_instance_id is not None:
         prop_sub_sync_index = base_station_index_id_mapping[data.device_steam_vr_index]
-        sdl(osc_i, data, base_stations_guid, base_stations_instance_id, prop_sub_sync_index)
+        sdl(data, base_stations_guid, base_stations_instance_id, prop_sub_sync_index)
         return
 
     # Handle trackers_0_2 & controllers prop
     if tracker_0_2_controllers_instance_id is not None:
 
         if data.device_type == TrackingDeviceType.left_controller:
-            sdl(osc_i, data, tracker_0_2_controllers_guid, tracker_0_2_controllers_instance_id, 0)
+            sdl(data, tracker_0_2_controllers_guid, tracker_0_2_controllers_instance_id, 0)
             return
         elif data.device_type == TrackingDeviceType.right_controller:
-            sdl(osc_i, data, tracker_0_2_controllers_guid, tracker_0_2_controllers_instance_id, 1)
+            sdl(data, tracker_0_2_controllers_guid, tracker_0_2_controllers_instance_id, 1)
             return
         elif data.device_type == TrackingDeviceType.tracker:
             if data.device_steam_vr_name in tracker_0_2__role__sub_sync_index:
                 prop_sub_sync_index = tracker_0_2__role__sub_sync_index[data.device_steam_vr_name]
-                sdl(osc_i, data, tracker_0_2_controllers_guid, tracker_0_2_controllers_instance_id, prop_sub_sync_index)
+                sdl(data, tracker_0_2_controllers_guid, tracker_0_2_controllers_instance_id, prop_sub_sync_index)
                 return
 
     # Handle trackers_3_7 prop
     if data.device_type == TrackingDeviceType.tracker and tracker_3_7_instance_id is not None and \
             data.device_steam_vr_name in tracker_3_7_mapping__role__sub_sync_index:
         prop_sub_sync_index = tracker_3_7_mapping__role__sub_sync_index[data.device_steam_vr_name]
-        sdl(osc_i, data, tracker_3_7_guid, tracker_3_7_instance_id, prop_sub_sync_index)
+        sdl(data, tracker_3_7_guid, tracker_3_7_instance_id, prop_sub_sync_index)
 
     # Commented because it's spammy af
     # print(f'Tacking device type: {data.device_type} named: {data.device_steam_vr_name} index: '
@@ -230,9 +282,9 @@ if __name__ == '__main__':
     osc.on_prop_availability_changed(on_prop_availability_changed)
 
     # Listen to tracked devices status changes (careful this is very spammy, every frame by default)
-    osc.on_tracking_device_status_changed(lambda data: on_tracking_device_status_changed(osc, data))
+    osc.on_tracking_device_status_changed(on_tracking_device_status_changed)
     # Listen to tracked devices data updates (careful this is very spammy, every frame by default)
-    osc.on_tracking_device_data_updated(lambda data: on_tracking_device_data_updated(osc, data))
+    osc.on_tracking_device_data_updated(on_tracking_device_data_updated)
 
     # Start the osc interface (starts both osc sender client and listener server)
     osc.start()

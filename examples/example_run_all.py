@@ -2,12 +2,25 @@ import sys
 from time import sleep
 from typing import Optional
 
-from cvr_osc_lib import (AvatarChangeReceive, AvatarChangeSend,
-                         AvatarParameterChange, Input, InputName, OscInterface,
-                         PropAvailability, PropCreateReceive, PropCreateSend,
-                         PropDelete, PropLocation, PropLocationSub,
-                         PropParameter, TrackingDeviceData,
-                         TrackingDeviceStatus, TrackingPlaySpaceData, Vector3)
+from cvr_osc_lib import (
+    AvatarChangeReceive,
+    AvatarChangeSend,
+    AvatarParameterChange,
+    Input,
+    InputName,
+    OscInterface,
+    PropAvailability,
+    PropCreateReceive,
+    PropCreateSend,
+    PropDelete,
+    PropLocation,
+    PropLocationSub,
+    PropParameter,
+    TrackingDeviceData,
+    TrackingDeviceStatus,
+    TrackingPlaySpaceData,
+    Vector3,
+)
 
 ###
 # Welcome to an example how to use this half ass wrapper.

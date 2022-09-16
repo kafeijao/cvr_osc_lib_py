@@ -7,6 +7,8 @@ I also added typing hits in most places, so should be pretty easy to use.
 
 [Melon Loader OSC mod](https://github.com/kafeijao/Kafe_CVR_Mods/tree/master/OSC)
 
+**Compatible with**: [v1.0.3-rc2](https://github.com/kafeijao/Kafe_CVR_Mods/releases/tag/r12)
+
 I also included a few examples how to use the library, they require specific prop setup, and since
 we're not able to publish public props yet, you will need to either upload your own or ask me to
 share them with you (if you happen to find me in-game).
