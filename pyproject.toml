@@ -4,13 +4,12 @@ build-backend = "hatchling.build"
 
 [project]
 name = "cvr-osc-lib"
-version = "0.0.2"
+version = "0.0.3"
 authors = [
   { name="kafeijao", email="kafeijao@gmail.com" },
 ]
 description = "A small library to interface with CVR Melon Loader OSC mod API"
 readme = "README.md"
-license = { file="LICENSE" }
 requires-python = ">=3.9"
 classifiers = [
     "Programming Language :: Python :: 3",
