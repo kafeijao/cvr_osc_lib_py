@@ -2,7 +2,7 @@ import asyncio
 from enum import Enum
 from typing import Dict
 
-from winrt.windows.media.control import (
+from winsdk.windows.media.control import (
     GlobalSystemMediaTransportControlsSessionManager as MediaManager,
     GlobalSystemMediaTransportControlsSessionPlaybackStatus as PlaybackStatus,
 )
@@ -12,9 +12,9 @@ from cvr_osc_lib import OscInterface, AvatarParameterChange
 
 ###
 # Welcome to an example how to feet the windows global media info into OSC
-# This uses the winrt package, so before you use this you need to install it with the command:
+# This uses the winsdk package, so before you use this you need to install it with the command:
 #
-# pip install winrt
+# pip install winsdk
 #
 ###
 
@@ -175,9 +175,9 @@ if __name__ == '__main__':
     # Start the osc interface (starts both osc sender client and listener server)
     osc.start()
 
-    # Start winrt listener
+    # Start winsdk listener
+    print('Starting winsdk session change listener...')
     asyncio.run(start_manager_listener())
-    print('Started winrt session change listener...')
 
     # Don't let the program end
     input()
