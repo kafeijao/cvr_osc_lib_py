@@ -52,7 +52,9 @@ if __name__ == '__main__':
     osc.on_avatar_parameter_changed(avatar_parameter_change)
 
     # Start the osc interface (starts both osc sender client and listener server)
-    osc.start()
+    # If you only want to send osc msg, you don't need to call this, the sender will start
+    # when you attempt to send your first OSC msg
+    osc.start(start_sender=True, start_receiver=True)
 
     # Start sending OSC commands (needs to be done after the interface is started)
     # Inform the mod that a new osc server is listening, so it resends all the cached state

@@ -168,7 +168,10 @@ if __name__ == '__main__':
     osc.on_tracking_device_data_updated(on_tracking_device_data_updated)
 
     # Start the osc interface (starts both osc sender client and listener server)
-    osc.start()
+    # You can optionally not start the sender (it will be started if you attempt to send an osc msg)
+    # You only need to call the start if you intend to listen to osc messages, otherwise you don't need to which will
+    # keep the 9001 port free for other osc apps :) You can have multiple senders, but only 1 server bound to a port
+    osc.start(start_sender=True, start_receiver=True)
 
     # Inform the mod that a new osc server is listening, so it resends all the cached state (if previously connected)
     osc.send_config_reset()

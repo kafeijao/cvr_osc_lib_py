@@ -26,6 +26,7 @@ class AppModelId(str, Enum):
     spotify = 'Spotify.exe'
     chrome = 'chrome.exe'
     firefox = 'firefox.exe'
+    vlc = 'vlc.exe'  # currently needs an addon to use windows global media thingy
 
     # Default value for when not found
     @classmethod
@@ -39,6 +40,7 @@ parameter_app_mapping: Dict[AppModelId, int] = {
     AppModelId.spotify: 1,
     AppModelId.chrome: 2,
     AppModelId.firefox: 3,
+    AppModelId.vlc: 4,
 }
 
 # Possible playback status parameter mapping, change the integers to match the parameters being sent for each state
@@ -157,6 +159,39 @@ def on_current_session_changed(manager, *args):
 
         # Since we changed session, lets poll the current playback info
         on_current_playback_info_changed()
+
+
+async def debug_check_all_sessions():
+    # Debug script to check all the current sessions and if they are being closed/opened
+    manager = await MediaManager.request_async()
+
+    sessions = {}
+    while True:
+        curr_sessions = manager.get_sessions()
+        curr_sessions_apps = [c.source_app_user_model_id for c in curr_sessions]
+
+        # Check for removed apps
+        to_delete = []
+        for prev_sessions_app in sessions.keys():
+            if prev_sessions_app not in curr_sessions_apps:
+                to_delete.append(prev_sessions_app)
+                new_session_kys = list(sessions.keys())
+                new_session_kys.remove(prev_sessions_app)
+                print(f'\nApp {prev_sessions_app} was removed! \n\tCurrent_Sessions: {", ".join(new_session_kys)}')
+        for d in to_delete:
+            del sessions[d]
+
+        # Check for additions
+        for curr_session in curr_sessions:
+            if not curr_session:
+                continue
+
+            if curr_session.source_app_user_model_id not in sessions.keys():
+                sessions[curr_session.source_app_user_model_id] = curr_session
+                print(
+                    f'\nAdded {curr_session.source_app_user_model_id} to sessions! '
+                    f'\n\tCurrent_Sessions: {", ".join(sessions.keys())}'
+                )
 
 
 async def start_manager_listener():

@@ -88,22 +88,26 @@ class OscInterface:
         self.sender = None
         self.receiver = None
 
-    def start(self):
+    def start(self, *, start_sender=True, start_receiver=True):
+        if self.sender is None and start_sender:
+            self._start_sender()
+
+        if self.receiver is None and start_receiver:
+            self.receiver = BlockingOSCUDPServer((self.osc_lib_ip, self.osc_lib_port), self.dispatcher)
+            print(f'Starting the OSC receiver... Will listen for messages from {self.osc_lib_ip}:{self.osc_lib_port}')
+
+            # Start receiver thread
+            osc_receiver_thread = threading.Thread(name='osc_server_loop', target=lambda: self.receiver.serve_forever())
+            osc_receiver_thread.daemon = True
+            osc_receiver_thread.start()
+
+    def _start_sender(self):
         self.sender = udp_client.SimpleUDPClient(self.osc_cvr_ip, self.osc_cvr_port)
         print(f'Starting the OSC sender... Will send messages to {self.osc_cvr_ip}:{self.osc_cvr_port}')
-        self.receiver = BlockingOSCUDPServer((self.osc_lib_ip, self.osc_lib_port), self.dispatcher)
-        print(f'Starting the OSC receiver... Will listen for messages from {self.osc_lib_ip}:{self.osc_lib_port}')
-
-        # Start receiver thread
-        osc_receiver_thread = threading.Thread(name='osc_server_loop', target=lambda: self.receiver.serve_forever())
-        osc_receiver_thread.daemon = True
-        osc_receiver_thread.start()
 
     def _send_data(self, address: str, *args):
         if self.sender is None:
-            print('You need to call the start function on the OscInterface before sending/listening for stuff')
-            return
-        # print(f'Sending {address} [{args}]')
+            self._start_sender()
         self.sender.send_message(address, args)
 
     def on_avatar_changed(self, callback: Callable[[AvatarChangeReceive], None]):
