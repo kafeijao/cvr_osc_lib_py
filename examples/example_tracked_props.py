@@ -1,5 +1,8 @@
 from time import sleep
 from typing import Any, Dict, Optional
+import configparser
+import os
+import json
 
 from cvr_osc_lib import (
     OscInterface,
@@ -13,46 +16,87 @@ from cvr_osc_lib import (
 )
 from cvr_osc_lib.osc_messages_data import TrackingDeviceType, TrackingViveTrackerName
 
+#######################################################################################################################
 
-###
-# Welcome to an example how to get tracked props working
-# This example should be used with the 3 props that comes in the unity package (or shared by me)
-# Currently the trackers are set up as 1 Vive 3.0 and 7 Tundra. You can change by going to the trackers in unity, and
-# hide all tundras and show the vive ones.
-# Note: For this to work you need to have the steamvr vive tracker roles properly set up!!!
-#
-# I also included the props I used for this script in the example_tracked_props.unitypackage
-# You need to install the CCK 3.4 before importing the unity package!
-###
+#CONFIG FILE
+# the script expects to find its config file at the path 'C:\CVR\OSC\OSC_Configs\trackers.conf' if you want to keep it
+# somewhere else change the following
 
-# CONFIG ###############################################################################################################
+configFilePath = r'C:\CVR\OSC\OSC_Configs\trackers.conf'
 
-# Prop ids (if you uploaded yourself, you'll need to change the guids)
-# You can leave the default guid if you didn't upload (and don't intent to use a certain prop)
-base_stations_guid = '33807561-c701-470c-abbe-43da89d35cae'
-tracker_0_2_controllers_guid = 'b85a4316-3a91-4ec7-a8a4-b0e7fa5e2b8c'
-tracker_3_7_guid = '5d9b2498-5ecd-446b-8ac0-78d6f549d041'
+#Example config file is `trackers.conf` found in this repo
+
+## You should not have to make changes after this line to make the script run
+#______________________________________________________________________________________________________________________
+
+## START CONFIG LOAD
+
+# Handle missing config file
+if not os.path.exists(configFilePath):
+  print(f'\nConfig file not found, please copy the example file "trackers.conf" to {configFilePath} and modify it to your needs')
+  print(f'Closing in 8 seconds \n')
+  sleep(8)
+  quit()
+
+# Load config file 
+config = configparser.RawConfigParser()
+config.read(configFilePath)
+
+## Load GUIDs
+# pull in the GUIDs from the config file 
+base_stations_guid = config.get('guids', 'base_stations' )
+tracker_0_2_controllers_guid = config.get('guids', 'tracker_0_2_controllers' )
+tracker_3_7_guid = config.get('guids', 'tracker_3_7' )
 
 # ### Tracker mapping
-# The Tracker role is the steamvr config of your trackers, you can change the role here to match it to another prop
+# The following loads in tracker mappings from the config file.
+# The Tracker role is the steamvr config of your trackers, you can change the role there to match it to another prop
 # sub-sync (for example the tracker_mapping_3_7 [4] is the one that has the bottle)
 # The indexes 0-4 are the positions of the sub-sync transforms (basically the order which you added to prop descriptor)
 # I only recommend changing here the role if you want to swap which tracker is which sub-sync
 
+###
+## Default prop mappings
+# waist = Vive tracker 3.0
+# left_foot = Tundra tracker
+# right_foot = Tundra tracker
+#
+
 tracker_0_2__role__sub_sync_index: Dict[Any, int] = {
-    TrackingViveTrackerName.waist.value: 2,        # Vive tracker 3.0
-    TrackingViveTrackerName.left_foot.value: 3,    # Tundra tracker
-    TrackingViveTrackerName.right_foot.value: 4,   # Tundra tracker
+    TrackingViveTrackerName.waist.value: config.get('trackermappings', 'waist'), 
+    TrackingViveTrackerName.left_foot.value: config.get('trackermappings', 'left_foot'),
+    TrackingViveTrackerName.right_foot.value: config.get('trackermappings', 'right_foot'),
 }
+###
+## Default prop mappings
+# chest = Tundra tracker
+# left_knee = Tundra tracker
+# right_knee = Tundra tracker
+# right_elbow = Tundra tracker
+# left_elbow = Tundra tracker with bottle
 
 tracker_3_7_mapping__role__sub_sync_index: Dict[Any, int] = {
-    TrackingViveTrackerName.chest.value: 0,        # Tundra tracker
-    TrackingViveTrackerName.left_knee.value: 1,    # Tundra tracker
-    TrackingViveTrackerName.right_knee.value: 2,   # Tundra tracker
-    TrackingViveTrackerName.right_elbow.value: 3,  # Tundra tracker
-    TrackingViveTrackerName.left_elbow.value: 4,   # Tundra tracker with bottle
+    TrackingViveTrackerName.chest.value: config.get('trackermappings', 'chest'),
+    TrackingViveTrackerName.left_knee.value: config.get('trackermappings', 'left_knee'),
+    TrackingViveTrackerName.right_knee.value: config.get('trackermappings', 'right_knee'), 
+    TrackingViveTrackerName.right_elbow.value: config.get('trackermappings', 'right_elbow'),
+    TrackingViveTrackerName.left_elbow.value: config.get('trackermappings', 'left_elbow'), 
 }
-# END CONFIG ###########################################################################################################
+
+# END CONFIG LOAD ###########################################################################################################
+
+# print out config settings
+print(f'\nLoaded config is as follows\n')
+print(f'Base stations prop GUID = {base_stations_guid}' )
+print(f'Trackers 0 to 2 + Controllers prop GUID = {tracker_0_2_controllers_guid}' )
+print(f'Trackers 3 to 7 prop GUID = {tracker_3_7_guid}' )
+
+print(f'\nTracker mapping configs')
+print(json.dumps(tracker_0_2__role__sub_sync_index, indent=2))
+print(json.dumps(tracker_3_7_mapping__role__sub_sync_index, indent=2))
+
+sleep(2)
+print(f'\nStarting main program\n-------------------\n')
 
 # We're going to grab the instance ids from the latest created prop
 base_stations_instance_id: Optional[str] = None
