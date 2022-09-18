@@ -63,9 +63,9 @@ tracker_3_7_guid = config.get('guids', 'tracker_3_7' )
 #
 
 tracker_0_2__role__sub_sync_index: Dict[Any, int] = {
-    TrackingViveTrackerName.waist.value: config.get('trackermappings', 'waist'), 
-    TrackingViveTrackerName.left_foot.value: config.get('trackermappings', 'left_foot'),
-    TrackingViveTrackerName.right_foot.value: config.get('trackermappings', 'right_foot'),
+    TrackingViveTrackerName.waist.value: int(config.get('trackermappings', 'waist')), 
+    TrackingViveTrackerName.left_foot.value: int(config.get('trackermappings', 'left_foot')),
+    TrackingViveTrackerName.right_foot.value: int(config.get('trackermappings', 'right_foot')),
 }
 ###
 ## Default prop mappings
@@ -76,11 +76,11 @@ tracker_0_2__role__sub_sync_index: Dict[Any, int] = {
 # left_elbow = Tundra tracker with bottle
 
 tracker_3_7_mapping__role__sub_sync_index: Dict[Any, int] = {
-    TrackingViveTrackerName.chest.value: config.get('trackermappings', 'chest'),
-    TrackingViveTrackerName.left_knee.value: config.get('trackermappings', 'left_knee'),
-    TrackingViveTrackerName.right_knee.value: config.get('trackermappings', 'right_knee'), 
-    TrackingViveTrackerName.right_elbow.value: config.get('trackermappings', 'right_elbow'),
-    TrackingViveTrackerName.left_elbow.value: config.get('trackermappings', 'left_elbow'), 
+    TrackingViveTrackerName.chest.value: int(config.get('trackermappings', 'chest')),
+    TrackingViveTrackerName.left_knee.value: int(config.get('trackermappings', 'left_knee')),
+    TrackingViveTrackerName.right_knee.value: int(config.get('trackermappings', 'right_knee')), 
+    TrackingViveTrackerName.right_elbow.value: int(config.get('trackermappings', 'right_elbow')),
+    TrackingViveTrackerName.left_elbow.value: int(config.get('trackermappings', 'left_elbow')),
 }
 
 # END CONFIG LOAD ###########################################################################################################
@@ -225,7 +225,7 @@ def update_props_connected_param(device_idx: Optional[int] = None):
             elif data.device_type == TrackingDeviceType.tracker \
                     and data.device_steam_vr_name in tracker_0_2__role__sub_sync_index:
                 # The name of the sync on the tracker_0_2 prop starts at index 2, but we need 0
-                prop_sync_name = f'Tracker - {tracker_0_2__role__sub_sync_index[data.device_steam_vr_name] - 2}'
+                prop_sync_name = f'Tracker - {tracker_0_2__role__sub_sync_index[data.device_steam_vr_name] - 2 }'
                 send_prop_param_status(
                     tracker_0_2_controllers_guid,
                     tracker_0_2_controllers_instance_id,
