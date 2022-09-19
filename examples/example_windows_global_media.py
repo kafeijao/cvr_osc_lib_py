@@ -26,7 +26,8 @@ class AppModelId(str, Enum):
     spotify = 'Spotify.exe'
     chrome = 'chrome.exe'
     firefox = 'firefox.exe'
-    vlc = 'vlc.exe'  # currently needs an addon to use windows global media thingy
+    vlc = 'vlc.exe' # currently needs an addon to use windows global media thingy
+    brave = 'brave.exe'
 
     # Default value for when not found
     @classmethod
@@ -41,6 +42,7 @@ parameter_app_mapping: Dict[AppModelId, int] = {
     AppModelId.chrome: 2,
     AppModelId.firefox: 3,
     AppModelId.vlc: 4,
+    AppModelId.brave: 5,
 }
 
 # Possible playback status parameter mapping, change the integers to match the parameters being sent for each state
