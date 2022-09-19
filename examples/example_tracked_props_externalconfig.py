@@ -98,6 +98,9 @@ print(f'Base stations prop GUID = {base_stations_guid}' )
 print(f'Trackers 0 to 2 + Controllers prop GUID = {tracker_0_2_controllers_guid}' )
 print(f'Trackers 3 to 7 prop GUID = {tracker_3_7_guid}' )
 
+print(f'Script will receive messages on {osc_receive_ip}:{osc_receive_port}')
+print(f'Script will send messages to {osc_send_ip}:{osc_send_port}')
+
 print(f'\nTracker mapping configs')
 print(json.dumps(tracker_0_2__role__sub_sync_index, indent=2))
 print(json.dumps(tracker_3_7_mapping__role__sub_sync_index, indent=2))
