@@ -100,3 +100,8 @@ Don't forget to import the `CCK 3.4` first!
 
 I would recommend checking the script for more info, has it has a little introduction and a bit
 of explanation on how to configure it.
+
+## Project contribution guide points
+
+Max line length should not exceed 120 chars
+Do not include IDE specific folders apart from those created by [Rider](https://www.jetbrains.com/rider/)
