@@ -15,11 +15,12 @@ This folder contains examples of how to use the `cvr_osc_lib` python library.
 Included in this repo are the props used for this script 'example_tracked_props.unitypackage'  
 You need to install the [CCK 3.4](https://docs.abinteractive.net/cck/setup/) before importing the unity package!
 
-## example_tracked_props.py  
+## example_tracked_props.py & example_tracked_props_externalconfig.py
 
-This example should be used with the 3 props that are provided in the unity package (or shared by me).  
+These examples should be used with the 3 props that are provided in the unity package (or shared by me).  
 Currently the trackers are set up as 1 Vive 3.0 and 7 Tundra. You can change by going to the trackers in unity, and hide all tundras and show the vive ones.  
 Note: For this to work you need to have the steamvr vive tracker roles properly set up!!!  
+Note: you will need a copy of the `tracker.conf` file at the path `C:\CVR\OSC\OSC_Configs\trackers.conf` if you use the externalconfig variant.  
 
 ## example_run_all.py
 
