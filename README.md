@@ -14,20 +14,21 @@ we're not able to publish public props yet, you will need to either upload your 
 share them with you (if you happen to find me in-game).
 
 ## Installation
+
 1. Install Python 3.9 or above.
 2. Create a `venv` [Optional]
 3. Run: `pip install cvr-osc-lib`
 4. Now the library is installed, you can start using it!
 
-
-
 ## Usage
+
 Small example of starting the osc server and client while listening to parameter and
 avatar changes. Then proceeds to change to one of the default robot avatars and change
 its color to red.
 
 The sleeps() and inputs() are there just to keep the example working,
 you probably shouldn't use them when making your script.
+
 ```python
 from time import sleep
 from cvr_osc_lib import OscInterface, AvatarChangeReceive, AvatarParameterChange, AvatarChangeSend)
@@ -79,8 +80,8 @@ if __name__ == '__main__':
 
 ```
 
-
 ## Example Run All
+
 This script has an interactive python console script that will iterate through all the osc
 endpoints. You can use as a reference on how to use a certain command or listen to a certain
 endpoint.
@@ -88,6 +89,7 @@ endpoint.
 There is a small description in the python file for the example, feel free to take a look.
 
 ## Example Tracked Props
+
 This script shows a possible implementation of attaching a prop/prop sub-sync transforms to a
 tracked device, like vive trackers.
 
@@ -98,3 +100,8 @@ Don't forget to import the `CCK 3.4` first!
 
 I would recommend checking the script for more info, has it has a little introduction and a bit
 of explanation on how to configure it.
+
+## Project contribution guide points
+
+Max line length should not exceed 120 chars
+Do not include IDE specific folders apart from those created by [Rider](https://www.jetbrains.com/rider/)
