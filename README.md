@@ -31,7 +31,7 @@ you probably shouldn't use them when making your script.
 
 ```python
 from time import sleep
-from cvr_osc_lib import OscInterface, AvatarChangeReceive, AvatarParameterChange, AvatarChangeSend)
+from cvr_osc_lib import OscInterface, AvatarChangeReceive, AvatarParameterChange, AvatarChangeSend
 
 
 def avatar_change(data: AvatarChangeReceive):
