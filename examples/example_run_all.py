@@ -131,7 +131,7 @@ def on_tracking_device_status_changed(data: TrackingDeviceStatus):
 
 def on_tracking_device_data_updated(data: TrackingDeviceData):
     # Commented because it's spammy af
-    # print(f'Tacking device type: {data.device_type} named: {data.device_steam_vr_name} index: '
+    # print(f'Tracking device type: {data.device_type} named: {data.device_steam_vr_name} index: '
     #       f'{data.device_steam_vr_index} Location [Pos: {str(data.device_position)} '
     #       f'Rot: {str(data.device_euler_rotation)}] and Battery: {data.device_battery_percentage}')
     pass

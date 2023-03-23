@@ -48,7 +48,7 @@ class EndpointPrefix(str, Enum):
 #     args_str = ''
 #     for i, arg in enumerate(args):
 #         args_str += f'\n\targ#{i + 1}: {arg} [{type(arg).__name__}]'
-#     #print(f'Received {address} {args_str}')
+#     print(f'Received {address} {args_str}')
 
 
 class OscInterface:
