@@ -219,3 +219,6 @@ cython_debug/
 
 # Jetbrains folders
 .idea
+
+# Ignore midi files
+**/*.mid
