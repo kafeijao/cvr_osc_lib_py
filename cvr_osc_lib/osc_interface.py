@@ -121,7 +121,7 @@ class OscInterface:
 
     def on_avatar_parameter_changed(self, callback: Callable[[AvatarParameterChange], None]):
         self.dispatcher.map(
-            f'{EndpointPrefix.avatar_parameter}',
+            f'{EndpointPrefix.avatar_parameter.value}',
             lambda address, *args: callback(AvatarParameterChange(args[1], args[0])),
         )
 
@@ -130,7 +130,7 @@ class OscInterface:
 
     def on_avatar_parameter_changed_legacy(self, callback: Callable[[AvatarParameterChange], None]):
         self.dispatcher.map(
-            f'{EndpointPrefix.avatar_parameters_legacy}*',
+            f'{EndpointPrefix.avatar_parameters_legacy.value}*',
             lambda address, *args: callback(AvatarParameterChange(
                 address[len(EndpointPrefix.avatar_parameters_legacy):],
                 args[0],
@@ -138,10 +138,10 @@ class OscInterface:
         )
 
     def send_avatar_parameter_legacy(self, data: AvatarParameterChange):
-        self._send_data(f'{EndpointPrefix.avatar_parameters_legacy}{data.parameter_name}', data.parameter_value)
+        self._send_data(f'{EndpointPrefix.avatar_parameters_legacy.value}{data.parameter_name}', data.parameter_value)
 
     def set_input(self, data: Input):
-        self._send_data(f'{EndpointPrefix.input}{data.input_name.value}', data.input_value)
+        self._send_data(f'{EndpointPrefix.input.value}{data.input_name.value}', data.input_value)
 
     def on_prop_created(self, callback: Callable[[PropCreateReceive], None]):
         self.dispatcher.map(
