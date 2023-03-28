@@ -48,7 +48,7 @@ class EndpointPrefix(str, Enum):
 #     """
 #     Default handler for the OSC messages.
 #     note this is only used for debugging purposes, and will spam the console
-    
+
 #     parameters
 #     ----------
 #     address : str
@@ -197,7 +197,8 @@ class OscInterface:
         )
 
     def send_avatar_parameter_legacy(self, data: AvatarParameterChange):
-        self._send_data(f'{EndpointPrefix.avatar_parameters_legacy.value}{data.parameter_name}', data.parameter_value)
+        self._send_data(f'{EndpointPrefix.avatar_parameters_legacy.value}{data.parameter_name}',
+                        data.parameter_value)
 
     def set_input(self, data: Input):
         self._send_data(f'{EndpointPrefix.input.value}{data.input_name.value}', data.input_value)
@@ -212,7 +213,9 @@ class OscInterface:
         if data.prop_local_position is None:
             self._send_data(EndpointPrefix.prop_create, data.prop_guid)
         else:
-            self._send_data(EndpointPrefix.prop_create, data.prop_guid, *astuple(data.prop_local_position))
+            self._send_data(EndpointPrefix.prop_create,
+                            data.prop_guid,
+                            *astuple(data.prop_local_position))
 
     def on_prop_deleted(self, callback: Callable[[PropDelete], None]):
         self.dispatcher.map(
@@ -290,7 +293,9 @@ class OscInterface:
             *astuple(data.prop_euler_rotation),
         )
 
-    def on_tracking_play_space_data_updated(self, callback: Callable[[TrackingPlaySpaceData], None]):
+    def on_tracking_play_space_data_updated(self,
+                                            callback: Callable[[TrackingPlaySpaceData],
+                                            None]):
         self.dispatcher.map(
             EndpointPrefix.tracking_play_space_data,
             lambda address, *args: callback(TrackingPlaySpaceData(
