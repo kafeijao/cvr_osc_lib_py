@@ -109,7 +109,8 @@ class OscInterface:
 
         if self.receiver is None and start_receiver:
             self.receiver = BlockingOSCUDPServer((self.osc_lib_ip, self.osc_lib_port), self.dispatcher)
-            print(f'Starting the OSC receiver... Will listen for messages from {self.osc_lib_ip}:{self.osc_lib_port}')
+            self._print_starting_message('receiver')
+            #print(f'Starting the OSC receiver... Will listen for messages from {self.osc_lib_ip}:{self.osc_lib_port}')
 
             # Start receiver thread
             osc_receiver_thread = threading.Thread(name='osc_server_loop', target=lambda: self.receiver.serve_forever())
@@ -118,12 +119,31 @@ class OscInterface:
 
     def _start_sender(self):
         self.sender = udp_client.SimpleUDPClient(self.osc_cvr_ip, self.osc_cvr_port)
-        print(f'Starting the OSC sender... Will send messages to {self.osc_cvr_ip}:{self.osc_cvr_port}')
+        self._print_starting_message('sender')
+        # print(f'Starting the OSC sender... Will send messages to {self.osc_cvr_ip}:{self.osc_cvr_port}')
 
     def _send_data(self, address: str, *args):
         if self.sender is None:
             self._start_sender()
         self.sender.send_message(address, args)
+
+    def _print_starting_message(self, startup_message_mode: str):
+        """
+        Prints the starting message.
+        parameters
+        ----------
+        message_mode : str
+            The message mode. Either 'sender' or 'receiver'
+        returns
+        -------
+        None
+        """
+        if startup_message_mode == 'sender':
+            print(f'Starting the OSC sender... Will send messages to\
+                    {self.osc_cvr_ip}:{self.osc_cvr_port}')
+        elif startup_message_mode == 'receiver':
+            print(f'Starting the OSC receiver... Will listen for messages from\
+                    {self.osc_lib_ip}:{self.osc_lib_port}')
 
     def on_avatar_changed(self, callback: Callable[[AvatarChangeReceive], None]):
         self.dispatcher.map(
