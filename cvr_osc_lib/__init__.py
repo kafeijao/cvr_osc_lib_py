@@ -1,3 +1,4 @@
+"""cvr_osc_lib - A library for sending and receiving OSC messages for CVR."""
 from cvr_osc_lib.osc_interface import OscInterface
 from cvr_osc_lib.osc_messages_data import (
     AvatarChangeReceive,
