@@ -1,3 +1,5 @@
+"""Module to define the OSC messages data classes."""
+
 import dataclasses
 from dataclasses import dataclass
 from enum import Enum
@@ -5,6 +7,7 @@ from typing import Optional, Union
 
 
 class InputName(str, Enum):
+    """Class to represent the input names."""
     # AXIS
 
     horizontal = 'Horizontal',
@@ -72,6 +75,7 @@ class InputName(str, Enum):
 
 
 class TrackingDeviceType(str, Enum):
+    """Class to represent the tracking device types."""
     hmd = 'hmd'
     base_station = 'base_station'
     left_controller = 'left_controller'
@@ -81,6 +85,7 @@ class TrackingDeviceType(str, Enum):
 
 
 class TrackingViveTrackerName(str, Enum):
+    """Class to represent the vive tracker names."""
     disabled = 'vive_tracker'
     held_in_hand = 'vive_tracker_handed'
     camera = 'vive_tracker_camera'
