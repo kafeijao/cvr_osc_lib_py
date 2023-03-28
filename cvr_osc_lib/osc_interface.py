@@ -231,7 +231,7 @@ class OscInterface:
         callback : Callable[[AvatarParameterChange], None]
             The callback function to be called when the avatar parameter change event is received.
             The callback function should have one parameter,
-                which is the AvatarParameterChange object.
+              which is the AvatarParameterChange object.
 
         returns
         -------
@@ -267,9 +267,10 @@ class OscInterface:
         parameters
         ----------
         callback : Callable[[AvatarParameterChange], None]
-            The callback function to be called when the avatar parameter change event is received.
+            The callback function to be called when the
+              avatar parameter change event is received.
             The callback function should have one parameter,
-                which is the AvatarParameterChange object.
+              which is the AvatarParameterChange object.
                 
             returns
             -------
@@ -326,9 +327,10 @@ class OscInterface:
         parameters
         ----------
         callback : Callable[[PropCreateReceive], None]
-            The callback function to be called when the prop create event is received.
+            The callback function to be called when the
+              prop create event is received.
             The callback function should have one parameter,
-                which is the PropCreateReceive object.
+              which is the PropCreateReceive object.
 
         returns
         -------
@@ -369,9 +371,10 @@ class OscInterface:
         parameters
         ----------
         callback : Callable[[PropDelete], None]
-            The callback function to be called when the prop delete event is received.
+            The callback function to be called when the 
+              prop delete event is received.
             The callback function should have one parameter,
-                which is the PropDelete object.
+              which is the PropDelete object.
 
         returns
         -------
@@ -411,9 +414,10 @@ class OscInterface:
         parameters
         ----------
         callback : Callable[[PropAvailability], None]
-            The callback function to be called when the prop availability change event is received.
+            The callback function to be called when the prop
+              availability change event is received.
             The callback function should have one parameter,
-                which is the PropAvailability object.
+              which is the PropAvailability object.
 
         returns
         -------
@@ -433,9 +437,10 @@ class OscInterface:
         parameters
         ----------
         callback : Callable[[PropParameter], None]
-            The callback function to be called when the prop parameter change event is received.
+            The callback function to be called when the prop
+              parameter change event is received.
             The callback function should have one parameter,
-                which is the PropParameter object.
+              which is the PropParameter object.
 
         returns
         -------
@@ -477,9 +482,10 @@ class OscInterface:
         parameters
         ----------
         callback : Callable[[PropLocation], None]
-            The callback function to be called when the prop location change event is received.
+            The callback function to be called when the prop 
+              location change event is received.
             The callback function should have one parameter,
-                which is the PropLocation object.
+              which is the PropLocation object.
 
         returns
         -------
@@ -528,7 +534,7 @@ class OscInterface:
         callback : Callable[[PropLocationSub], None]
             The callback function to be called when the prop location sub change event is received.
             The callback function should have one parameter,
-                which is the PropLocationSub object.
+              which is the PropLocationSub object.
 
         returns
         -------
