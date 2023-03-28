@@ -250,10 +250,10 @@ class OscInterface:
             The callback function to be called when the avatar parameter change event is received.
             The callback function should have one parameter, which is the AvatarParameterChange object.
 
-            returns
-            -------
-            None
-            """
+        returns
+        -------
+        None
+        """
         self.dispatcher.map(
             f'{EndpointPrefix.avatar_parameters_legacy.value}*',
             lambda address, *args: callback(AvatarParameterChange(
