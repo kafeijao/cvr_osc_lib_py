@@ -164,7 +164,6 @@ class OscInterface:
             self._start_sender()
         self.sender.send_message(address, args)
 
-
     def _print_starting_message(
                             self,
                             startup_message_mode: str
@@ -191,8 +190,7 @@ class OscInterface:
 
     def on_avatar_changed(
                      self,
-                     callback: Callable[[AvatarChangeReceive],
-                     None]
+                     callback: Callable[[AvatarChangeReceive], None]
     ):
         """
         Registers a callback for the avatar change event.
@@ -201,9 +199,8 @@ class OscInterface:
         ----------
         callback : Callable[[AvatarChangeReceive], None]
             The callback function to be called when the avatar change event is received.
-            The callback function should have one parameter, 
-              which is the AvatarChangeReceive object.
-            
+            The callback function should have one parameter, which is the AvatarChangeReceive object.
+
         returns
         -------
         None
@@ -233,8 +230,7 @@ class OscInterface:
 
     def on_avatar_parameter_changed(
                                self,
-                               callback: Callable[[AvatarParameterChange],
-                               None]
+                               callback: Callable[[AvatarParameterChange], None]
     ):
         """
         Registers a callback for the avatar parameter change event.
@@ -243,8 +239,7 @@ class OscInterface:
         ----------
         callback : Callable[[AvatarParameterChange], None]
             The callback function to be called when the avatar parameter change event is received.
-            The callback function should have one parameter,
-              which is the AvatarParameterChange object.
+            The callback function should have one parameter, which is the AvatarParameterChange object.
 
         returns
         -------
@@ -275,19 +270,17 @@ class OscInterface:
 
     def on_avatar_parameter_changed_legacy(
                                        self,
-                                       callback: Callable[[AvatarParameterChange],None]
+                                       callback: Callable[[AvatarParameterChange], None]
     ):
         """
         Registers a callback for the avatar parameter change event.
-        
+
         parameters
         ----------
         callback : Callable[[AvatarParameterChange], None]
-            The callback function to be called when the
-              avatar parameter change event is received.
-            The callback function should have one parameter,
-              which is the AvatarParameterChange object.
-                
+            The callback function to be called when the avatar parameter change event is received.
+            The callback function should have one parameter, which is the AvatarParameterChange object.
+
             returns
             -------
             None
@@ -348,10 +341,8 @@ class OscInterface:
         parameters
         ----------
         callback : Callable[[PropCreateReceive], None]
-            The callback function to be called when the
-              prop create event is received.
-            The callback function should have one parameter,
-              which is the PropCreateReceive object.
+            The callback function to be called when the prop create event is received.
+            The callback function should have one parameter, which is the PropCreateReceive object.
 
         returns
         -------
@@ -395,10 +386,8 @@ class OscInterface:
         parameters
         ----------
         callback : Callable[[PropDelete], None]
-            The callback function to be called when the 
-              prop delete event is received.
-            The callback function should have one parameter,
-              which is the PropDelete object.
+            The callback function to be called when the prop delete event is received.
+            The callback function should have one parameter,which is the PropDelete object.
 
         returns
         -------
@@ -441,10 +430,8 @@ class OscInterface:
         parameters
         ----------
         callback : Callable[[PropAvailability], None]
-            The callback function to be called when the prop
-              availability change event is received.
-            The callback function should have one parameter,
-              which is the PropAvailability object.
+            The callback function to be called when the prop availability change event is received.
+            The callback function should have one parameter, which is the PropAvailability object.
 
         returns
         -------
@@ -465,10 +452,8 @@ class OscInterface:
         parameters
         ----------
         callback : Callable[[PropParameter], None]
-            The callback function to be called when the prop
-              parameter change event is received.
-            The callback function should have one parameter,
-              which is the PropParameter object.
+            The callback function to be called when the prop parameter change event is received.
+            The callback function should have one parameter, which is the PropParameter object.
 
         returns
         -------
@@ -513,10 +498,8 @@ class OscInterface:
         parameters
         ----------
         callback : Callable[[PropLocation], None]
-            The callback function to be called when the prop 
-              location change event is received.
-            The callback function should have one parameter,
-              which is the PropLocation object.
+            The callback function to be called when the prop location change event is received.
+            The callback function should have one parameter, which is the PropLocation object.
 
         returns
         -------
@@ -567,8 +550,7 @@ class OscInterface:
         ----------
         callback : Callable[[PropLocationSub], None]
             The callback function to be called when the prop location sub change event is received.
-            The callback function should have one parameter,
-              which is the PropLocationSub object.
+            The callback function should have one parameter, which is the PropLocationSub object.
 
         returns
         -------
@@ -614,17 +596,15 @@ class OscInterface:
                                         self,
                                         callback: Callable[[TrackingPlaySpaceData], None]
     ):
-        """ 
+        """
         Registers a callback for the tracking play space data change event.
-        
+
         parameters
         ----------
         callback : Callable[[TrackingPlaySpaceData], None]
-            The callback function to be called when the tracking,
-              play space data change event is received.
-            The callback function should have one parameter,
-              which is the TrackingPlaySpaceData object.
-                
+            The callback function to be called when the tracking play space data change event is received.
+            The callback function should have one parameter, which is the TrackingPlaySpaceData object.
+
         returns
         -------
         None
@@ -643,15 +623,13 @@ class OscInterface:
     ):
         """
         Registers a callback for the tracking device status change event.
-        
+
         parameters
         ----------
         callback : Callable[[TrackingDeviceStatus], None]
-            The callback function to be called when the tracking device
-              status change event is received.
-            The callback function should have one parameter,
-              which is the TrackingDeviceStatus object.
-                
+            The callback function to be called when the tracking device status change event is received.
+            The callback function should have one parameter, which is the TrackingDeviceStatus object.
+
         returns
         -------
         None
@@ -673,10 +651,8 @@ class OscInterface:
         parameters
         ----------
         callback : Callable[[TrackingDeviceData], None]
-            The callback function to be called when the tracking device
-              data change event is received.
-            The callback function should have one parameter,
-              which is the TrackingDeviceData object.
+            The callback function to be called when the tracking device data change event is received.
+            The callback function should have one parameter, which is the TrackingDeviceData object.
 
         returns
         -------
@@ -697,9 +673,8 @@ class OscInterface:
     def send_config_reset(self):
         """
         Send a message to CVR to reset the config.
-        
-        note: sending a parameter because python-osc doesn't support actual nulls,
-              but it is ignored on the mod's end
+
+        note: sending a parameter because python-osc doesn't support actual nulls, but it is ignored on the mod's end
         parameters
         ----------
         None
