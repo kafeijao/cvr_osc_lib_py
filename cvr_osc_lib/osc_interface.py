@@ -394,7 +394,7 @@ class OscInterface:
         None
         """
         self.dispatcher.map(
-            EndpointPrefix.PROP_DELETE,
+            EndpointPrefix.prop_delete,
             lambda address, *args: callback(PropDelete(args[0], args[1])),
         )
 
@@ -415,7 +415,7 @@ class OscInterface:
         None
         """
         self._send_data(
-            EndpointPrefix.PROP_DELETE,
+            EndpointPrefix.prop_delete,
             data.prop_guid,
             data.prop_instance_id,
         )
