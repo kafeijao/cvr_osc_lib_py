@@ -45,6 +45,20 @@ class EndpointPrefix(str, Enum):
 
 
 # def osc_default_handler(address: str, *args) -> None:
+#     """
+#     Default handler for the OSC messages.
+#     note this is only used for debugging purposes, and will spam the console
+    
+#     parameters
+#     ----------
+#     address : str
+#         The OSC address
+#     args : list
+#         The OSC arguments
+#     returns
+#     -------
+#     None
+#     """
 #     args_str = ''
 #     for i, arg in enumerate(args):
 #         args_str += f'\n\targ#{i + 1}: {arg} [{type(arg).__name__}]'
@@ -78,6 +92,7 @@ class OscInterface:
         self.dispatcher: Dispatcher = Dispatcher()
 
         # noinspection PyTypeChecker
+        #uncomment the following line to enable the default handler (debugging purposes only)
         # self.dispatcher.set_default_handler(osc_default_handler)
 
         self.osc_lib_ip = osc_lib_ip
