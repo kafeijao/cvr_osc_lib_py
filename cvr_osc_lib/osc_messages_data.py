@@ -1,3 +1,10 @@
+"""Module to define the OSC messages data classes."""
+# Disable all the UPPER_CASE violations detections in this file as
+#  there are already too many scripts using this convention,
+#  to interface with this library and it would cause too much
+#  inconvenience for others if the names were changed.
+# pylint: disable=invalid-name
+
 import dataclasses
 from dataclasses import dataclass
 from enum import Enum
