@@ -99,11 +99,31 @@ class OscInterface:
         self.osc_lib_port = osc_lib_port
         self.osc_cvr_ip = osc_cvr_ip
         self.osc_cvr_port = osc_cvr_port
+        self.print_starting_messages = True
 
         self.sender = None
         self.receiver = None
 
-    def start(self, *, start_sender=True, start_receiver=True):
+    def start(self, *, start_sender=True, start_receiver=True, print_starting_messages=True):
+        """
+        Starts the OSC sender and receiver threads.
+
+        parameters
+        ----------
+        start_sender : bool, optional
+            Whether to start the sender thread or not
+        start_receiver : bool, optional
+            Whether to start the receiver thread or not
+        print_starting_messages : bool, optional
+            Whether to print the starting messages or not
+
+        returns
+        -------
+        None
+        """
+
+        self.print_starting_messages = print_starting_messages
+
         if self.sender is None and start_sender:
             self._start_sender()
 
@@ -127,23 +147,27 @@ class OscInterface:
             self._start_sender()
         self.sender.send_message(address, args)
 
+
     def _print_starting_message(self, startup_message_mode: str):
         """
-        Prints the starting message.
+        Prints the starting message, if self.print_starting_messages is True
+
         parameters
         ----------
-        message_mode : str
-            The message mode. Either 'sender' or 'receiver'
+        startup_message_mode : str
+            The mode the library is starting in. Can be either 'sender' or 'receiver'
+
         returns
         -------
         None
         """
-        if startup_message_mode == 'sender':
-            print(f'Starting the OSC sender... Will send messages to\
-                    {self.osc_cvr_ip}:{self.osc_cvr_port}')
-        elif startup_message_mode == 'receiver':
-            print(f'Starting the OSC receiver... Will listen for messages from\
-                    {self.osc_lib_ip}:{self.osc_lib_port}')
+        if self.print_starting_messages:
+            if startup_message_mode == 'sender':
+                print(f'Starting the OSC sender... Will send messages to\
+                        {self.osc_cvr_ip}:{self.osc_cvr_port}')
+            elif startup_message_mode == 'receiver':
+                print(f'Starting the OSC receiver... Will listen for messages from\
+                        {self.osc_lib_ip}:{self.osc_lib_port}')
 
     def on_avatar_changed(self, callback: Callable[[AvatarChangeReceive], None]):
         self.dispatcher.map(
