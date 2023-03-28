@@ -141,10 +141,7 @@ class OscInterface:
             self._start_sender()
         self.sender.send_message(address, args)
 
-    def _print_starting_message(
-                            self,
-                            startup_message_mode: str
-    ):
+    def _print_starting_message(self, startup_message_mode: str):
         """
         Prints the starting message, if self.print_starting_messages is True
 
@@ -240,8 +237,7 @@ class OscInterface:
 
         returns : None
         """
-        self._send_data(f'{EndpointPrefix.avatar_parameters_legacy.value}{data.parameter_name}',
-                        data.parameter_value)
+        self._send_data(f'{EndpointPrefix.avatar_parameters_legacy.value}{data.parameter_name}', data.parameter_value)
 
     def set_input(self, data: Input):
         """
@@ -281,9 +277,7 @@ class OscInterface:
         if data.prop_local_position is None:
             self._send_data(EndpointPrefix.prop_create, data.prop_guid)
         else:
-            self._send_data(EndpointPrefix.prop_create,
-                            data.prop_guid,
-                            *astuple(data.prop_local_position))
+            self._send_data(EndpointPrefix.prop_create, data.prop_guid, *astuple(data.prop_local_position))
 
     def on_prop_deleted(self, callback: Callable[[PropDelete], None]):
         """
