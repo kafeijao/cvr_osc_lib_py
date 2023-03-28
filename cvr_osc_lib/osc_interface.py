@@ -28,20 +28,20 @@ from cvr_osc_lib.osc_messages_data import (
 
 
 class EndpointPrefix(str, Enum):
-    avatar_change = '/avatar/change'
-    avatar_parameter = '/avatar/parameter'
-    avatar_parameters_legacy = '/avatar/parameters/'
-    input = '/input/'
-    prop_create = '/prop/create'
-    prop_delete = '/prop/delete'
-    prop_available = '/prop/available'
-    prop_parameter = '/prop/parameter'
-    prop_location = '/prop/location'
-    prop_location_sub = '/prop/location_sub'
-    tracking_device_status = '/tracking/device/status'
-    tracking_device_data = '/tracking/device/data'
-    tracking_play_space_data = '/tracking/play_space/data'
-    config_reset = '/config/reset'
+    AVATAR_CHANGE = '/avatar/change'
+    AVATAR_PARAMETER = '/avatar/parameter'
+    AVATAR_PARAMETERS_LEGACY = '/avatar/parameters/'
+    INPUT = '/input/'
+    PROP_CREATE = '/prop/create'
+    PROP_DELETE = '/prop/delete'
+    PROP_AVAILABLE = '/prop/available'
+    PROP_PARAMETER = '/prop/parameter'
+    PROP_LOCATION = '/prop/location'
+    PROP_LOCATION_SUB = '/prop/location_sub'
+    TRACKING_DEVICE_STATUS = '/tracking/device/status'
+    TRACKING_DEVICE_DATA = '/tracking/device/data'
+    TRACKING_PLAY_SPACE_DATA = '/tracking/play_space/data'
+    CONFIG_RESET = '/config/reset'
 
 
 # def osc_default_handler(address: str,
@@ -181,60 +181,60 @@ class OscInterface:
                           callback: Callable[[AvatarChangeReceive],
                           None]):
         self.dispatcher.map(
-            EndpointPrefix.avatar_change,
+            EndpointPrefix.AVATAR_CHANGE,
             lambda address, *args: callback(AvatarChangeReceive(args[0], args[1])),
         )
 
     def send_avatar_change(self,
                            data: AvatarChangeSend):
-        self._send_data(EndpointPrefix.avatar_change, data.avatar_guid)
+        self._send_data(EndpointPrefix.AVATAR_CHANGE, data.avatar_guid)
 
     def on_avatar_parameter_changed(self,
                                     callback: Callable[[AvatarParameterChange],
                                     None]):
         self.dispatcher.map(
-            f'{EndpointPrefix.avatar_parameter.value}',
+            f'{EndpointPrefix.AVATAR_PARAMETER.value}',
             lambda address, *args: callback(AvatarParameterChange(args[1], args[0])),
         )
 
     def send_avatar_parameter(self,
                               data: AvatarParameterChange):
-        self._send_data(EndpointPrefix.avatar_parameter, data.parameter_value, data.parameter_name)
+        self._send_data(EndpointPrefix.AVATAR_PARAMETER, data.parameter_value, data.parameter_name)
 
     def on_avatar_parameter_changed_legacy(self,
                                            callback: Callable[[AvatarParameterChange],
                                            None]):
         self.dispatcher.map(
-            f'{EndpointPrefix.avatar_parameters_legacy.value}*',
+            f'{EndpointPrefix.AVATAR_PARAMETERS_LEGACY.value}*',
             lambda address, *args: callback(AvatarParameterChange(
-                address[len(EndpointPrefix.avatar_parameters_legacy):],
+                address[len(EndpointPrefix.AVATAR_PARAMETERS_LEGACY):],
                 args[0],
             )),
         )
 
     def send_avatar_parameter_legacy(self,
                                      data: AvatarParameterChange):
-        self._send_data(f'{EndpointPrefix.avatar_parameters_legacy.value}{data.parameter_name}',
+        self._send_data(f'{EndpointPrefix.AVATAR_PARAMETERS_LEGACY.value}{data.parameter_name}',
                         data.parameter_value)
 
     def set_input(self,
                   data: Input):
-        self._send_data(f'{EndpointPrefix.input.value}{data.input_name.value}', data.input_value)
+        self._send_data(f'{EndpointPrefix.INPUT.value}{data.input_name.value}', data.input_value)
 
     def on_prop_created(self,
                         callback: Callable[[PropCreateReceive],
                         None]):
         self.dispatcher.map(
-            EndpointPrefix.prop_create,
+            EndpointPrefix.PROP_CREATE,
             lambda address, *args: callback(PropCreateReceive(args[0], args[1], args[2])),
         )
 
     def send_prop_create(self,
                          data: PropCreateSend):
         if data.prop_local_position is None:
-            self._send_data(EndpointPrefix.prop_create, data.prop_guid)
+            self._send_data(EndpointPrefix.PROP_CREATE, data.prop_guid)
         else:
-            self._send_data(EndpointPrefix.prop_create,
+            self._send_data(EndpointPrefix.PROP_CREATE,
                             data.prop_guid,
                             *astuple(data.prop_local_position))
 
@@ -242,14 +242,14 @@ class OscInterface:
                         callback: Callable[[PropDelete],
                         None]):
         self.dispatcher.map(
-            EndpointPrefix.prop_delete,
+            EndpointPrefix.PROP_DELETE,
             lambda address, *args: callback(PropDelete(args[0], args[1])),
         )
 
     def send_prop_delete(self,
                          data: PropDelete):
         self._send_data(
-            EndpointPrefix.prop_delete,
+            EndpointPrefix.PROP_DELETE,
             data.prop_guid,
             data.prop_instance_id,
         )
@@ -258,7 +258,7 @@ class OscInterface:
                                      callback: Callable[[PropAvailability],
                                      None]):
         self.dispatcher.map(
-            EndpointPrefix.prop_available,
+            EndpointPrefix.PROP_AVAILABLE,
             lambda address, *args: callback(PropAvailability(args[0], args[1], args[2])),
         )
 
@@ -266,14 +266,14 @@ class OscInterface:
                                   callback: Callable[[PropParameter],
                                   None]):
         self.dispatcher.map(
-            EndpointPrefix.prop_parameter,
+            EndpointPrefix.PROP_PARAMETER,
             lambda address, *args: callback(PropParameter(args[0], args[1], args[2], args[3])),
         )
 
     def send_prop_parameter(self,
                             data: PropParameter):
         self._send_data(
-            EndpointPrefix.prop_parameter,
+            EndpointPrefix.PROP_PARAMETER,
             data.prop_guid,
             data.prop_instance_id,
             data.prop_sync_name,
@@ -284,7 +284,7 @@ class OscInterface:
                                  callback: Callable[[PropLocation],
                                  None]):
         self.dispatcher.map(
-            EndpointPrefix.prop_location,
+            EndpointPrefix.PROP_LOCATION,
             lambda address, *args: callback(PropLocation(
                 args[0],
                 args[1],
@@ -296,7 +296,7 @@ class OscInterface:
     def send_prop_location(self,
                            data: PropLocation):
         self._send_data(
-            EndpointPrefix.prop_location,
+            EndpointPrefix.PROP_LOCATION,
             data.prop_guid,
             data.prop_instance_id,
             *astuple(data.prop_position),
@@ -307,7 +307,7 @@ class OscInterface:
                                      callback: Callable[[PropLocationSub],
                                      None]):
         self.dispatcher.map(
-            EndpointPrefix.prop_location_sub,
+            EndpointPrefix.PROP_LOCATION_SUB,
             lambda address, *args: callback(PropLocationSub(
                 args[0],
                 args[1],
@@ -320,7 +320,7 @@ class OscInterface:
     def send_prop_location_sub_sync(self,
                                     data: PropLocationSub):
         self._send_data(
-            EndpointPrefix.prop_location_sub,
+            EndpointPrefix.PROP_LOCATION_SUB,
             data.prop_guid,
             data.prop_instance_id,
             data.prop_sub_sync_index,
@@ -332,7 +332,7 @@ class OscInterface:
                                             callback: Callable[[TrackingPlaySpaceData],
                                             None]):
         self.dispatcher.map(
-            EndpointPrefix.tracking_play_space_data,
+            EndpointPrefix.TRACKING_PLAY_SPACE_DATA,
             lambda address, *args: callback(TrackingPlaySpaceData(
                 Vector3(args[0], args[1], args[2]),
                 Vector3(args[3], args[4], args[5]),
@@ -343,7 +343,7 @@ class OscInterface:
                                           callback: Callable[[TrackingDeviceStatus],
                                           None]):
         self.dispatcher.map(
-            EndpointPrefix.tracking_device_status,
+            EndpointPrefix.TRACKING_DEVICE_STATUS,
             lambda address, *args: callback(
                 TrackingDeviceStatus(args[0], TrackingDeviceType[args[1]], args[2], args[3]),
             ),
@@ -353,7 +353,7 @@ class OscInterface:
                                         callback: Callable[[TrackingDeviceData],
                                         None]):
         self.dispatcher.map(
-            EndpointPrefix.tracking_device_data,
+            EndpointPrefix.TRACKING_DEVICE_DATA,
             lambda address, *args: callback(TrackingDeviceData(
                 TrackingDeviceType[args[0]],
                 args[1],
@@ -378,6 +378,6 @@ class OscInterface:
         None
         """
         self._send_data(
-            EndpointPrefix.config_reset,
+            EndpointPrefix.CONFIG_RESET,
             "null",
         )
