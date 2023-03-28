@@ -44,7 +44,8 @@ class EndpointPrefix(str, Enum):
     config_reset = '/config/reset'
 
 
-# def osc_default_handler(address: str, *args) -> None:
+# def osc_default_handler(address: str,
+#                         *args) -> None:
 #     """
 #     Default handler for the OSC messages.
 #     note this is only used for debugging purposes, and will spam the console
@@ -104,7 +105,11 @@ class OscInterface:
         self.sender = None
         self.receiver = None
 
-    def start(self, *, start_sender=True, start_receiver=True, print_starting_messages=True):
+    def start(self,
+              *,
+              start_sender=True,
+              start_receiver=True,
+              print_starting_messages=True):
         """
         Starts the OSC sender and receiver threads.
 
@@ -142,13 +147,16 @@ class OscInterface:
         self.sender = udp_client.SimpleUDPClient(self.osc_cvr_ip, self.osc_cvr_port)
         self._print_starting_message('sender')
 
-    def _send_data(self, address: str, *args):
+    def _send_data(self,
+                   address: str,
+                   *args):
         if self.sender is None:
             self._start_sender()
         self.sender.send_message(address, args)
 
 
-    def _print_starting_message(self, startup_message_mode: str):
+    def _print_starting_message(self,
+                                startup_message_mode: str):
         """
         Prints the starting message, if self.print_starting_messages is True
 
@@ -169,25 +177,33 @@ class OscInterface:
                 print(f'Starting the OSC receiver... Will listen for messages from\
                         {self.osc_lib_ip}:{self.osc_lib_port}')
 
-    def on_avatar_changed(self, callback: Callable[[AvatarChangeReceive], None]):
+    def on_avatar_changed(self,
+                          callback: Callable[[AvatarChangeReceive],
+                          None]):
         self.dispatcher.map(
             EndpointPrefix.avatar_change,
             lambda address, *args: callback(AvatarChangeReceive(args[0], args[1])),
         )
 
-    def send_avatar_change(self, data: AvatarChangeSend):
+    def send_avatar_change(self,
+                           data: AvatarChangeSend):
         self._send_data(EndpointPrefix.avatar_change, data.avatar_guid)
 
-    def on_avatar_parameter_changed(self, callback: Callable[[AvatarParameterChange], None]):
+    def on_avatar_parameter_changed(self,
+                                    callback: Callable[[AvatarParameterChange],
+                                    None]):
         self.dispatcher.map(
             f'{EndpointPrefix.avatar_parameter.value}',
             lambda address, *args: callback(AvatarParameterChange(args[1], args[0])),
         )
 
-    def send_avatar_parameter(self, data: AvatarParameterChange):
+    def send_avatar_parameter(self,
+                              data: AvatarParameterChange):
         self._send_data(EndpointPrefix.avatar_parameter, data.parameter_value, data.parameter_name)
 
-    def on_avatar_parameter_changed_legacy(self, callback: Callable[[AvatarParameterChange], None]):
+    def on_avatar_parameter_changed_legacy(self,
+                                           callback: Callable[[AvatarParameterChange],
+                                           None]):
         self.dispatcher.map(
             f'{EndpointPrefix.avatar_parameters_legacy.value}*',
             lambda address, *args: callback(AvatarParameterChange(
@@ -196,20 +212,25 @@ class OscInterface:
             )),
         )
 
-    def send_avatar_parameter_legacy(self, data: AvatarParameterChange):
+    def send_avatar_parameter_legacy(self,
+                                     data: AvatarParameterChange):
         self._send_data(f'{EndpointPrefix.avatar_parameters_legacy.value}{data.parameter_name}',
                         data.parameter_value)
 
-    def set_input(self, data: Input):
+    def set_input(self,
+                  data: Input):
         self._send_data(f'{EndpointPrefix.input.value}{data.input_name.value}', data.input_value)
 
-    def on_prop_created(self, callback: Callable[[PropCreateReceive], None]):
+    def on_prop_created(self,
+                        callback: Callable[[PropCreateReceive],
+                        None]):
         self.dispatcher.map(
             EndpointPrefix.prop_create,
             lambda address, *args: callback(PropCreateReceive(args[0], args[1], args[2])),
         )
 
-    def send_prop_create(self, data: PropCreateSend):
+    def send_prop_create(self,
+                         data: PropCreateSend):
         if data.prop_local_position is None:
             self._send_data(EndpointPrefix.prop_create, data.prop_guid)
         else:
@@ -217,32 +238,40 @@ class OscInterface:
                             data.prop_guid,
                             *astuple(data.prop_local_position))
 
-    def on_prop_deleted(self, callback: Callable[[PropDelete], None]):
+    def on_prop_deleted(self,
+                        callback: Callable[[PropDelete],
+                        None]):
         self.dispatcher.map(
             EndpointPrefix.prop_delete,
             lambda address, *args: callback(PropDelete(args[0], args[1])),
         )
 
-    def send_prop_delete(self, data: PropDelete):
+    def send_prop_delete(self,
+                         data: PropDelete):
         self._send_data(
             EndpointPrefix.prop_delete,
             data.prop_guid,
             data.prop_instance_id,
         )
 
-    def on_prop_availability_changed(self, callback: Callable[[PropAvailability], None]):
+    def on_prop_availability_changed(self,
+                                     callback: Callable[[PropAvailability],
+                                     None]):
         self.dispatcher.map(
             EndpointPrefix.prop_available,
             lambda address, *args: callback(PropAvailability(args[0], args[1], args[2])),
         )
 
-    def on_prop_parameter_changed(self, callback: Callable[[PropParameter], None]):
+    def on_prop_parameter_changed(self,
+                                  callback: Callable[[PropParameter],
+                                  None]):
         self.dispatcher.map(
             EndpointPrefix.prop_parameter,
             lambda address, *args: callback(PropParameter(args[0], args[1], args[2], args[3])),
         )
 
-    def send_prop_parameter(self, data: PropParameter):
+    def send_prop_parameter(self,
+                            data: PropParameter):
         self._send_data(
             EndpointPrefix.prop_parameter,
             data.prop_guid,
@@ -251,7 +280,9 @@ class OscInterface:
             data.prop_sync_value,
         )
 
-    def on_prop_location_updated(self, callback: Callable[[PropLocation], None]):
+    def on_prop_location_updated(self,
+                                 callback: Callable[[PropLocation],
+                                 None]):
         self.dispatcher.map(
             EndpointPrefix.prop_location,
             lambda address, *args: callback(PropLocation(
@@ -262,7 +293,8 @@ class OscInterface:
             )),
         )
 
-    def send_prop_location(self, data: PropLocation):
+    def send_prop_location(self,
+                           data: PropLocation):
         self._send_data(
             EndpointPrefix.prop_location,
             data.prop_guid,
@@ -271,7 +303,9 @@ class OscInterface:
             *astuple(data.prop_euler_rotation),
         )
 
-    def on_prop_location_sub_updated(self, callback: Callable[[PropLocationSub], None]):
+    def on_prop_location_sub_updated(self,
+                                     callback: Callable[[PropLocationSub],
+                                     None]):
         self.dispatcher.map(
             EndpointPrefix.prop_location_sub,
             lambda address, *args: callback(PropLocationSub(
@@ -283,7 +317,8 @@ class OscInterface:
             )),
         )
 
-    def send_prop_location_sub_sync(self, data: PropLocationSub):
+    def send_prop_location_sub_sync(self,
+                                    data: PropLocationSub):
         self._send_data(
             EndpointPrefix.prop_location_sub,
             data.prop_guid,
@@ -304,7 +339,9 @@ class OscInterface:
             )),
         )
 
-    def on_tracking_device_status_changed(self, callback: Callable[[TrackingDeviceStatus], None]):
+    def on_tracking_device_status_changed(self,
+                                          callback: Callable[[TrackingDeviceStatus],
+                                          None]):
         self.dispatcher.map(
             EndpointPrefix.tracking_device_status,
             lambda address, *args: callback(
@@ -312,7 +349,9 @@ class OscInterface:
             ),
         )
 
-    def on_tracking_device_data_updated(self, callback: Callable[[TrackingDeviceData], None]):
+    def on_tracking_device_data_updated(self,
+                                        callback: Callable[[TrackingDeviceData],
+                                        None]):
         self.dispatcher.map(
             EndpointPrefix.tracking_device_data,
             lambda address, *args: callback(TrackingDeviceData(
