@@ -48,8 +48,10 @@ class EndpointPrefix(str, Enum):
     CONFIG_RESET = '/config/reset'
 
 
-# def osc_default_handler(address: str,
-#                         *args) -> None:
+# def osc_default_handler(
+#                     address: str,
+#                     *args
+# ) -> None:
 #     """
 #     Default handler for the OSC messages.
 #     note this is only used for debugging purposes, and will spam the console
@@ -60,6 +62,7 @@ class EndpointPrefix(str, Enum):
 #         The OSC address
 #     args : list
 #         The OSC arguments
+
 #     returns
 #     -------
 #     None
@@ -98,7 +101,7 @@ class OscInterface:
         self.dispatcher: Dispatcher = Dispatcher()
 
         # noinspection PyTypeChecker
-        #uncomment the following line to enable the default handler (debugging purposes only)
+        # uncomment the following line to enable the default handler (debugging purposes only)
         # self.dispatcher.set_default_handler(osc_default_handler)
 
         self.osc_lib_ip = osc_lib_ip
@@ -110,11 +113,13 @@ class OscInterface:
         self.sender = None
         self.receiver = None
 
-    def start(self,
-              *,
-              start_sender=True,
-              start_receiver=True,
-              print_starting_messages=True):
+    def start(
+          self,
+          *,
+          start_sender=True,
+          start_receiver=True,
+          print_starting_messages=True
+    ):
         """
         Starts the OSC sender and receiver threads.
 
@@ -138,13 +143,11 @@ class OscInterface:
             self._start_sender()
 
         if self.receiver is None and start_receiver:
-            self.receiver = BlockingOSCUDPServer((self.osc_lib_ip, self.osc_lib_port),
-                                                 self.dispatcher)
+            self.receiver = BlockingOSCUDPServer((self.osc_lib_ip, self.osc_lib_port), self.dispatcher)
             self._print_starting_message('receiver')
 
             # Start receiver thread
-            osc_receiver_thread = threading.Thread(name='osc_server_loop',
-                                                   target=lambda: self.receiver.serve_forever())
+            osc_receiver_thread = threading.Thread(name='osc_server_loop', target=lambda: self.receiver.serve_forever())
             osc_receiver_thread.daemon = True
             osc_receiver_thread.start()
 
@@ -152,16 +155,20 @@ class OscInterface:
         self.sender = udp_client.SimpleUDPClient(self.osc_cvr_ip, self.osc_cvr_port)
         self._print_starting_message('sender')
 
-    def _send_data(self,
-                   address: str,
-                   *args):
+    def _send_data(
+               self,
+               address: str,
+               *args
+    ):
         if self.sender is None:
             self._start_sender()
         self.sender.send_message(address, args)
 
 
-    def _print_starting_message(self,
-                                startup_message_mode: str):
+    def _print_starting_message(
+                            self,
+                            startup_message_mode: str
+    ):
         """
         Prints the starting message, if self.print_starting_messages is True
 
@@ -182,9 +189,11 @@ class OscInterface:
                 print(f'Starting the OSC receiver... Will listen for messages from\
                         {self.osc_lib_ip}:{self.osc_lib_port}')
 
-    def on_avatar_changed(self,
-                          callback: Callable[[AvatarChangeReceive],
-                          None]):
+    def on_avatar_changed(
+                     self,
+                     callback: Callable[[AvatarChangeReceive],
+                     None]
+    ):
         """
         Registers a callback for the avatar change event.
 
@@ -204,8 +213,10 @@ class OscInterface:
             lambda address, *args: callback(AvatarChangeReceive(args[0], args[1])),
         )
 
-    def send_avatar_change(self,
-                           data: AvatarChangeSend):
+    def send_avatar_change(
+                       self,
+                       data: AvatarChangeSend
+    ):
         """
         Sends an avatar change event to CVR.
 
@@ -220,9 +231,11 @@ class OscInterface:
         """
         self._send_data(EndpointPrefix.AVATAR_CHANGE, data.avatar_guid)
 
-    def on_avatar_parameter_changed(self,
-                                    callback: Callable[[AvatarParameterChange],
-                                    None]):
+    def on_avatar_parameter_changed(
+                               self,
+                               callback: Callable[[AvatarParameterChange],
+                               None]
+    ):
         """
         Registers a callback for the avatar parameter change event.
 
@@ -242,8 +255,10 @@ class OscInterface:
             lambda address, *args: callback(AvatarParameterChange(args[1], args[0])),
         )
 
-    def send_avatar_parameter(self,
-                              data: AvatarParameterChange):
+    def send_avatar_parameter(
+                           self,
+                           data: AvatarParameterChange
+    ):
         """
         Sends an avatar parameter change event to CVR.
 
@@ -258,9 +273,10 @@ class OscInterface:
         """
         self._send_data(EndpointPrefix.AVATAR_PARAMETER, data.parameter_value, data.parameter_name)
 
-    def on_avatar_parameter_changed_legacy(self,
-                                           callback: Callable[[AvatarParameterChange],
-                                           None]):
+    def on_avatar_parameter_changed_legacy(
+                                       self,
+                                       callback: Callable[[AvatarParameterChange],None]
+    ):
         """
         Registers a callback for the avatar parameter change event.
         
@@ -284,8 +300,10 @@ class OscInterface:
             )),
         )
 
-    def send_avatar_parameter_legacy(self,
-                                     data: AvatarParameterChange):
+    def send_avatar_parameter_legacy(
+                                 self,
+                                 data: AvatarParameterChange
+    ):
         """
         Sends an avatar parameter change event to CVR.
 
@@ -301,8 +319,10 @@ class OscInterface:
         self._send_data(f'{EndpointPrefix.AVATAR_PARAMETERS_LEGACY.value}{data.parameter_name}',
                         data.parameter_value)
 
-    def set_input(self,
-                  data: Input):
+    def set_input(
+              self,
+              data: Input
+    ):
         """
         Sets an input value.
 
@@ -318,9 +338,10 @@ class OscInterface:
 
         self._send_data(f'{EndpointPrefix.INPUT.value}{data.input_name.value}', data.input_value)
 
-    def on_prop_created(self,
-                        callback: Callable[[PropCreateReceive],
-                        None]):
+    def on_prop_created(
+                   self,
+                   callback: Callable[[PropCreateReceive], None]
+    ):
         """
         Registers a callback for the prop create event.
 
@@ -341,8 +362,10 @@ class OscInterface:
             lambda address, *args: callback(PropCreateReceive(args[0], args[1], args[2])),
         )
 
-    def send_prop_create(self,
-                         data: PropCreateSend):
+    def send_prop_create(
+                     self,
+                     data: PropCreateSend
+    ):
         """
         Sends a prop create event to CVR.
 
@@ -362,9 +385,10 @@ class OscInterface:
                             data.prop_guid,
                             *astuple(data.prop_local_position))
 
-    def on_prop_deleted(self,
-                        callback: Callable[[PropDelete],
-                        None]):
+    def on_prop_deleted(
+                    self,
+                    callback: Callable[[PropDelete], None]
+    ):
         """
         Registers a callback for the prop delete event.
 
@@ -385,8 +409,10 @@ class OscInterface:
             lambda address, *args: callback(PropDelete(args[0], args[1])),
         )
 
-    def send_prop_delete(self,
-                         data: PropDelete):
+    def send_prop_delete(
+                     self,
+                     data: PropDelete
+    ):
         """
         Sends a prop delete event to CVR.
 
@@ -405,9 +431,10 @@ class OscInterface:
             data.prop_instance_id,
         )
 
-    def on_prop_availability_changed(self,
-                                     callback: Callable[[PropAvailability],
-                                     None]):
+    def on_prop_availability_changed(
+                                self,
+                                callback: Callable[[PropAvailability], None]
+    ):
         """
         Registers a callback for the prop availability change event.
 
@@ -428,9 +455,10 @@ class OscInterface:
             lambda address, *args: callback(PropAvailability(args[0], args[1], args[2])),
         )
 
-    def on_prop_parameter_changed(self,
-                                  callback: Callable[[PropParameter],
-                                  None]):
+    def on_prop_parameter_changed(
+                             self,
+                             callback: Callable[[PropParameter], None]
+    ):
         """
         Registers a callback for the prop parameter change event.
 
@@ -451,8 +479,10 @@ class OscInterface:
             lambda address, *args: callback(PropParameter(args[0], args[1], args[2], args[3])),
         )
 
-    def send_prop_parameter(self,
-                            data: PropParameter):
+    def send_prop_parameter(
+                       self,
+                       data: PropParameter
+    ):
         """
         Sends a prop parameter change event to CVR.
 
@@ -473,9 +503,10 @@ class OscInterface:
             data.prop_sync_value,
         )
 
-    def on_prop_location_updated(self,
-                                 callback: Callable[[PropLocation],
-                                 None]):
+    def on_prop_location_updated(
+                            self,
+                            callback: Callable[[PropLocation], None]
+    ):
         """
         Registers a callback for the prop location change event.
 
@@ -501,8 +532,10 @@ class OscInterface:
             )),
         )
 
-    def send_prop_location(self,
-                           data: PropLocation):
+    def send_prop_location(
+                       self,
+                       data: PropLocation
+    ):
         """
         Sends a prop location change event to CVR.
 
@@ -523,9 +556,10 @@ class OscInterface:
             *astuple(data.prop_euler_rotation),
         )
 
-    def on_prop_location_sub_updated(self,
-                                     callback: Callable[[PropLocationSub],
-                                     None]):
+    def on_prop_location_sub_updated(
+                                 self,
+                                 callback: Callable[[PropLocationSub], None]
+    ):
         """
         Registers a callback for the prop location sub change event.
 
@@ -551,8 +585,10 @@ class OscInterface:
             )),
         )
 
-    def send_prop_location_sub_sync(self,
-                                    data: PropLocationSub):
+    def send_prop_location_sub_sync(
+                                self,
+                                data: PropLocationSub
+    ):
         """
         Sends a prop location sub sync event to CVR.
 
@@ -574,9 +610,10 @@ class OscInterface:
             *astuple(data.prop_euler_rotation),
         )
 
-    def on_tracking_play_space_data_updated(self,
-                                            callback: Callable[[TrackingPlaySpaceData],
-                                            None]):
+    def on_tracking_play_space_data_updated(
+                                        self,
+                                        callback: Callable[[TrackingPlaySpaceData], None]
+    ):
         """ 
         Registers a callback for the tracking play space data change event.
         
@@ -600,9 +637,10 @@ class OscInterface:
             )),
         )
 
-    def on_tracking_device_status_changed(self,
-                                          callback: Callable[[TrackingDeviceStatus],
-                                          None]):
+    def on_tracking_device_status_changed(
+                                      self,
+                                      callback: Callable[[TrackingDeviceStatus], None]
+    ):
         """
         Registers a callback for the tracking device status change event.
         
@@ -625,9 +663,10 @@ class OscInterface:
             ),
         )
 
-    def on_tracking_device_data_updated(self,
-                                        callback: Callable[[TrackingDeviceData],
-                                        None]):
+    def on_tracking_device_data_updated(
+                                    self,
+                                    callback: Callable[[TrackingDeviceData], None]
+    ):
         """
         Registers a callback for the tracking device data change event.
 
