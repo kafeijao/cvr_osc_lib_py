@@ -326,7 +326,19 @@ class OscInterface:
         )
 
     def send_config_reset(self):
+        """
+        Send a message to CVR to reset the config.
+        
+        note: sending a parameter because python-osc doesn't support actual nulls,
+              but it is ignored on the mod's end
+        parameters
+        ----------
+        None
+        returns
+        -------
+        None
+        """
         self._send_data(
             EndpointPrefix.config_reset,
-            "null",  # sending a parameter because python-osc doesn't support actual nulls. But it is ignored on the mod
+            "null",
         )
