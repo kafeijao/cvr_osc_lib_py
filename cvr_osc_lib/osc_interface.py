@@ -1,3 +1,6 @@
+"""
+This library is used to communicate with the CVR OSC Mod.
+"""
 import threading
 from dataclasses import astuple
 from enum import Enum
@@ -28,6 +31,7 @@ from cvr_osc_lib.osc_messages_data import (
 
 
 class EndpointPrefix(str, Enum):
+    """ The OSC endpoint prefixes """
     AVATAR_CHANGE = '/avatar/change'
     AVATAR_PARAMETER = '/avatar/parameter'
     AVATAR_PARAMETERS_LEGACY = '/avatar/parameters/'
@@ -67,6 +71,7 @@ class EndpointPrefix(str, Enum):
 
 
 class OscInterface:
+    """ This class provides the interface to communicate with the CVR OSC Mod. """
     def __init__(
             self,
             osc_lib_port: int = 9001,
@@ -180,6 +185,20 @@ class OscInterface:
     def on_avatar_changed(self,
                           callback: Callable[[AvatarChangeReceive],
                           None]):
+        """
+        Registers a callback for the avatar change event.
+
+        parameters
+        ----------
+        callback : Callable[[AvatarChangeReceive], None]
+            The callback function to be called when the avatar change event is received.
+            The callback function should have one parameter, 
+              which is the AvatarChangeReceive object.
+            
+        returns
+        -------
+        None
+        """
         self.dispatcher.map(
             EndpointPrefix.AVATAR_CHANGE,
             lambda address, *args: callback(AvatarChangeReceive(args[0], args[1])),
@@ -187,11 +206,37 @@ class OscInterface:
 
     def send_avatar_change(self,
                            data: AvatarChangeSend):
+        """
+        Sends an avatar change event to CVR.
+
+        parameters
+        ----------
+        data : AvatarChangeSend
+            The data to be sent to CVR.
+
+        returns
+        -------
+        None
+        """
         self._send_data(EndpointPrefix.AVATAR_CHANGE, data.avatar_guid)
 
     def on_avatar_parameter_changed(self,
                                     callback: Callable[[AvatarParameterChange],
                                     None]):
+        """
+        Registers a callback for the avatar parameter change event.
+
+        parameters
+        ----------
+        callback : Callable[[AvatarParameterChange], None]
+            The callback function to be called when the avatar parameter change event is received.
+            The callback function should have one parameter,
+                which is the AvatarParameterChange object.
+
+        returns
+        -------
+        None
+        """
         self.dispatcher.map(
             f'{EndpointPrefix.AVATAR_PARAMETER.value}',
             lambda address, *args: callback(AvatarParameterChange(args[1], args[0])),
@@ -199,11 +244,37 @@ class OscInterface:
 
     def send_avatar_parameter(self,
                               data: AvatarParameterChange):
+        """
+        Sends an avatar parameter change event to CVR.
+
+        parameters
+        ----------
+        data : AvatarParameterChange
+            The data to be sent to CVR.
+
+        returns
+        -------
+        None
+        """
         self._send_data(EndpointPrefix.AVATAR_PARAMETER, data.parameter_value, data.parameter_name)
 
     def on_avatar_parameter_changed_legacy(self,
                                            callback: Callable[[AvatarParameterChange],
                                            None]):
+        """
+        Registers a callback for the avatar parameter change event.
+        
+        parameters
+        ----------
+        callback : Callable[[AvatarParameterChange], None]
+            The callback function to be called when the avatar parameter change event is received.
+            The callback function should have one parameter,
+                which is the AvatarParameterChange object.
+                
+            returns
+            -------
+            None
+            """
         self.dispatcher.map(
             f'{EndpointPrefix.AVATAR_PARAMETERS_LEGACY.value}*',
             lambda address, *args: callback(AvatarParameterChange(
@@ -214,16 +285,55 @@ class OscInterface:
 
     def send_avatar_parameter_legacy(self,
                                      data: AvatarParameterChange):
+        """
+        Sends an avatar parameter change event to CVR.
+
+        parameters
+        ----------
+        data : AvatarParameterChange
+            The data to be sent to CVR.
+
+        returns
+        -------
+        None
+        """
         self._send_data(f'{EndpointPrefix.AVATAR_PARAMETERS_LEGACY.value}{data.parameter_name}',
                         data.parameter_value)
 
     def set_input(self,
                   data: Input):
+        """
+        Sets an input value.
+
+        parameters
+        ----------
+        data : Input
+            The data to be sent to CVR.
+
+        returns
+        -------
+        None
+        """
+
         self._send_data(f'{EndpointPrefix.INPUT.value}{data.input_name.value}', data.input_value)
 
     def on_prop_created(self,
                         callback: Callable[[PropCreateReceive],
                         None]):
+        """
+        Registers a callback for the prop create event.
+
+        parameters
+        ----------
+        callback : Callable[[PropCreateReceive], None]
+            The callback function to be called when the prop create event is received.
+            The callback function should have one parameter,
+                which is the PropCreateReceive object.
+
+        returns
+        -------
+        None
+        """
         self.dispatcher.map(
             EndpointPrefix.PROP_CREATE,
             lambda address, *args: callback(PropCreateReceive(args[0], args[1], args[2])),
@@ -231,6 +341,18 @@ class OscInterface:
 
     def send_prop_create(self,
                          data: PropCreateSend):
+        """
+        Sends a prop create event to CVR.
+
+        parameters
+        ----------
+        data : PropCreateSend
+            The data to be sent to CVR.
+
+        returns
+        -------
+        None
+        """
         if data.prop_local_position is None:
             self._send_data(EndpointPrefix.PROP_CREATE, data.prop_guid)
         else:
@@ -241,6 +363,20 @@ class OscInterface:
     def on_prop_deleted(self,
                         callback: Callable[[PropDelete],
                         None]):
+        """
+        Registers a callback for the prop delete event.
+
+        parameters
+        ----------
+        callback : Callable[[PropDelete], None]
+            The callback function to be called when the prop delete event is received.
+            The callback function should have one parameter,
+                which is the PropDelete object.
+
+        returns
+        -------
+        None
+        """
         self.dispatcher.map(
             EndpointPrefix.PROP_DELETE,
             lambda address, *args: callback(PropDelete(args[0], args[1])),
@@ -248,6 +384,18 @@ class OscInterface:
 
     def send_prop_delete(self,
                          data: PropDelete):
+        """
+        Sends a prop delete event to CVR.
+
+        parameters
+        ----------
+        data : PropDelete
+            The data to be sent to CVR.
+
+        returns
+        -------
+        None
+        """
         self._send_data(
             EndpointPrefix.PROP_DELETE,
             data.prop_guid,
@@ -257,6 +405,20 @@ class OscInterface:
     def on_prop_availability_changed(self,
                                      callback: Callable[[PropAvailability],
                                      None]):
+        """
+        Registers a callback for the prop availability change event.
+
+        parameters
+        ----------
+        callback : Callable[[PropAvailability], None]
+            The callback function to be called when the prop availability change event is received.
+            The callback function should have one parameter,
+                which is the PropAvailability object.
+
+        returns
+        -------
+        None
+        """
         self.dispatcher.map(
             EndpointPrefix.PROP_AVAILABLE,
             lambda address, *args: callback(PropAvailability(args[0], args[1], args[2])),
@@ -265,6 +427,20 @@ class OscInterface:
     def on_prop_parameter_changed(self,
                                   callback: Callable[[PropParameter],
                                   None]):
+        """
+        Registers a callback for the prop parameter change event.
+
+        parameters
+        ----------
+        callback : Callable[[PropParameter], None]
+            The callback function to be called when the prop parameter change event is received.
+            The callback function should have one parameter,
+                which is the PropParameter object.
+
+        returns
+        -------
+        None
+        """
         self.dispatcher.map(
             EndpointPrefix.PROP_PARAMETER,
             lambda address, *args: callback(PropParameter(args[0], args[1], args[2], args[3])),
@@ -272,6 +448,18 @@ class OscInterface:
 
     def send_prop_parameter(self,
                             data: PropParameter):
+        """
+        Sends a prop parameter change event to CVR.
+
+        parameters
+        ----------
+        data : PropParameter
+            The data to be sent to CVR.
+
+        returns
+        -------
+        None
+        """
         self._send_data(
             EndpointPrefix.PROP_PARAMETER,
             data.prop_guid,
@@ -283,6 +471,20 @@ class OscInterface:
     def on_prop_location_updated(self,
                                  callback: Callable[[PropLocation],
                                  None]):
+        """
+        Registers a callback for the prop location change event.
+
+        parameters
+        ----------
+        callback : Callable[[PropLocation], None]
+            The callback function to be called when the prop location change event is received.
+            The callback function should have one parameter,
+                which is the PropLocation object.
+
+        returns
+        -------
+        None
+        """
         self.dispatcher.map(
             EndpointPrefix.PROP_LOCATION,
             lambda address, *args: callback(PropLocation(
@@ -295,6 +497,18 @@ class OscInterface:
 
     def send_prop_location(self,
                            data: PropLocation):
+        """
+        Sends a prop location change event to CVR.
+
+        parameters
+        ----------
+        data : PropLocation
+            The data to be sent to CVR.
+
+        returns
+        -------
+        None
+        """
         self._send_data(
             EndpointPrefix.PROP_LOCATION,
             data.prop_guid,
@@ -306,6 +520,20 @@ class OscInterface:
     def on_prop_location_sub_updated(self,
                                      callback: Callable[[PropLocationSub],
                                      None]):
+        """
+        Registers a callback for the prop location sub change event.
+
+        parameters
+        ----------
+        callback : Callable[[PropLocationSub], None]
+            The callback function to be called when the prop location sub change event is received.
+            The callback function should have one parameter,
+                which is the PropLocationSub object.
+
+        returns
+        -------
+        None
+        """
         self.dispatcher.map(
             EndpointPrefix.PROP_LOCATION_SUB,
             lambda address, *args: callback(PropLocationSub(
@@ -319,6 +547,18 @@ class OscInterface:
 
     def send_prop_location_sub_sync(self,
                                     data: PropLocationSub):
+        """
+        Sends a prop location sub sync event to CVR.
+
+        parameters
+        ----------
+        data : PropLocationSub
+            The data to be sent to CVR.
+
+        returns
+        -------
+        None
+        """
         self._send_data(
             EndpointPrefix.PROP_LOCATION_SUB,
             data.prop_guid,
@@ -331,6 +571,21 @@ class OscInterface:
     def on_tracking_play_space_data_updated(self,
                                             callback: Callable[[TrackingPlaySpaceData],
                                             None]):
+        """ 
+        Registers a callback for the tracking play space data change event.
+        
+        parameters
+        ----------
+        callback : Callable[[TrackingPlaySpaceData], None]
+            The callback function to be called when the tracking,
+              play space data change event is received.
+            The callback function should have one parameter,
+              which is the TrackingPlaySpaceData object.
+                
+        returns
+        -------
+        None
+        """
         self.dispatcher.map(
             EndpointPrefix.TRACKING_PLAY_SPACE_DATA,
             lambda address, *args: callback(TrackingPlaySpaceData(
@@ -342,6 +597,21 @@ class OscInterface:
     def on_tracking_device_status_changed(self,
                                           callback: Callable[[TrackingDeviceStatus],
                                           None]):
+        """
+        Registers a callback for the tracking device status change event.
+        
+        parameters
+        ----------
+        callback : Callable[[TrackingDeviceStatus], None]
+            The callback function to be called when the tracking device
+              status change event is received.
+            The callback function should have one parameter,
+              which is the TrackingDeviceStatus object.
+                
+        returns
+        -------
+        None
+        """
         self.dispatcher.map(
             EndpointPrefix.TRACKING_DEVICE_STATUS,
             lambda address, *args: callback(
@@ -352,6 +622,21 @@ class OscInterface:
     def on_tracking_device_data_updated(self,
                                         callback: Callable[[TrackingDeviceData],
                                         None]):
+        """
+        Registers a callback for the tracking device data change event.
+
+        parameters
+        ----------
+        callback : Callable[[TrackingDeviceData], None]
+            The callback function to be called when the tracking device
+              data change event is received.
+            The callback function should have one parameter,
+              which is the TrackingDeviceData object.
+
+        returns
+        -------
+        None
+        """
         self.dispatcher.map(
             EndpointPrefix.TRACKING_DEVICE_DATA,
             lambda address, *args: callback(TrackingDeviceData(
