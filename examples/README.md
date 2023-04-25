@@ -33,3 +33,9 @@ Also if you want this to run smoothly for you, you need to edit the configuratio
 This example script shows how to feed windows global media info into OSC  
 Note: This uses the winsdk package, so before you use this you need to install it with the command:  
 `pip install winsdk`  
+
+## example_windows_global_media_chat_box.py  
+
+This example script shows how to feed windows global media info into chat boxes via OSC 
+Note: This uses the winsdk package, so before you use this you need to install it with the command:  
+`pip install winsdk`  
