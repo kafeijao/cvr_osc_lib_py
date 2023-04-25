@@ -39,3 +39,9 @@ Note: This uses the winsdk package, so before you use this you need to install i
 This example script shows how to feed windows global media info into chat boxes via OSC 
 Note: This uses the winsdk package, so before you use this you need to install it with the command:  
 `pip install winsdk`  
+
+## example_chat_box_messenger.py  
+
+This example script shows how send messages and is typing state to the chat box via OSC
+Note: This uses the keyboard package, so before you use this you need to install it with the command:  
+`pip install keyboard`  
