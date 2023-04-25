@@ -123,9 +123,8 @@ async def loop():
 if __name__ == '__main__':
     osc = OscInterface()
 
-    # Start the osc interface (starts both osc sender client and listener server)
-    osc.start()
+    # Start the osc interface, starts both osc sender client
+    osc.start(start_receiver=False)
 
     # Start Update loop
     asyncio.run(loop())
-
