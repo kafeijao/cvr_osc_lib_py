@@ -14,6 +14,8 @@ from cvr_osc_lib.osc_messages_data import (
     AvatarChangeReceive,
     AvatarChangeSend,
     AvatarParameterChange,
+    ChatBoxIsTyping,
+    ChatBoxMessage,
     Input,
     PropAvailability,
     PropCreateReceive,
@@ -46,6 +48,8 @@ class EndpointPrefix(str, Enum):
     tracking_device_data = '/tracking/device/data'
     tracking_play_space_data = '/tracking/play_space/data'
     config_reset = '/config/reset'
+    chat_box_input = '/chatbox/input'
+    chat_box_typing = '/chatbox/typing'
 
 
 # def osc_default_handler(address: str, *args) -> None:
@@ -594,8 +598,7 @@ class OscInterface:
 
         note: sending a parameter because python-osc doesn't support actual nulls, but it is ignored on the mod's end
         parameters
-        ----------
-        None
+
         returns
         -------
         None
@@ -603,4 +606,43 @@ class OscInterface:
         self._send_data(
             EndpointPrefix.config_reset,
             "null",
+        )
+
+    def send_chat_box_message(self, data: ChatBoxMessage):
+        """
+        Send a message to the ChatBox.
+
+        parameters
+        ----------
+        data : ChatBoxMessage
+            The data of the message to be sent to the ChatBox.
+
+        returns
+        -------
+        None
+        """
+        self._send_data(
+            EndpointPrefix.chat_box_input,
+            data.message,
+            data.send_immediately,
+            data.sound_notification,
+        )
+
+    def send_chat_box_is_typing(self, data: ChatBoxIsTyping):
+        """
+        Send a IsTyping event to the ChatBox.
+
+        parameters
+        ----------
+        data : ChatBoxIsTyping
+            The data of the IsTyping event to be sent to the ChatBox.
+
+        returns
+        -------
+        None
+        """
+        self._send_data(
+            EndpointPrefix.chat_box_typing,
+            data.is_typing,
+            data.sound_notification,
         )

@@ -228,3 +228,18 @@ class TrackingDeviceData:
     device_position: Optional[Vector3] = None
     device_euler_rotation: Optional[Vector3] = None
     device_battery_percentage: float = 0.0
+
+
+@dataclass
+class ChatBoxMessage:
+    """Class to represent a ChatBox Message Sending event data."""
+    message: str
+    send_immediately: bool
+    sound_notification: bool = False
+
+
+@dataclass
+class ChatBoxIsTyping:
+    """Class to represent a ChatBox IsTyping Sending event data."""
+    is_typing: bool
+    sound_notification: bool = False
