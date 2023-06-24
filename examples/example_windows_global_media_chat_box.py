@@ -92,6 +92,10 @@ async def update_playing_info():
         current_app = AppModelId(current_session.source_app_user_model_id)
 
     app_name = str.upper(os.path.splitext(current_app.value)[0])
+    # It seems on Windows 11 source_app_user_model_id has the actual name of the process
+    if app_name == 'NONE':
+        app_name = current_session.source_app_user_model_id
+
     playback_status = str.lower(playback_status.name)
     artist = current_media_properties.artist + '<br>'
     title = current_media_properties.title
