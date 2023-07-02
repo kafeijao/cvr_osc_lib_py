@@ -77,5 +77,7 @@ if __name__ == '__main__':
             osc.send_chat_box_message(ChatBoxMessage(
                 message=user_input,
                 send_immediately=True,
-                sound_notification=False,
+                sound_notification=True,
+                show_in_chat_box=True,
+                show_in_history_window=True,
             ))

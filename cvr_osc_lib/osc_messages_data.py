@@ -236,6 +236,8 @@ class ChatBoxMessage:
     message: str
     send_immediately: bool
     sound_notification: bool = False
+    show_in_chat_box: bool = True
+    show_in_history_window: bool = False
 
 
 @dataclass

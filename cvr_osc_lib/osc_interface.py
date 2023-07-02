@@ -626,6 +626,8 @@ class OscInterface:
             data.message,
             data.send_immediately,
             data.sound_notification,
+            data.show_in_chat_box,
+            data.show_in_history_window,
         )
 
     def send_chat_box_is_typing(self, data: ChatBoxIsTyping):

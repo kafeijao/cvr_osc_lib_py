@@ -115,6 +115,8 @@ async def update_playing_info():
         message=message,
         send_immediately=True,
         sound_notification=False,
+        show_in_chat_box=True,
+        show_in_history_window=False,
     ))
 
 
